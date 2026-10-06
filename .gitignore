@@ -1,0 +1,12 @@
+target/
+*.class
+*.war
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+.DS_Store
+# Local DB credentials override (keep db.properties generic in the repo)
+src/main/resources/db.local.properties

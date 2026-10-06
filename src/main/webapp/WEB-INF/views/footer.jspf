@@ -1,0 +1,5 @@
+</main>
+<footer class="footer">FitPro &copy; 2026 &middot; Online Fitness Training Platform &middot; Java Servlets + JSP + JDBC</footer>
+<script src="${ctx}/js/app.js"></script>
+</body>
+</html>
