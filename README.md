@@ -100,6 +100,7 @@ http://localhost:8080/fitpro/
 fitpro/
 ├── pom.xml                         Maven build (WAR)
 ├── README.md
+├── docs/FitPro_Presentation.pptx   Project presentation
 ├── database/
 │   └── schema.sql                  Tables + sample data
 └── src/main/
