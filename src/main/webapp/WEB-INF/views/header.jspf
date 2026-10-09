@@ -6,19 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${pageTitle}" default="FitPro"/> | FitPro</title>
   <link rel="stylesheet" href="${ctx}/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="${ctx}/">Fit<span>Pro</span></a>
+  <a class="brand" href="${ctx}/"><i class="fa-solid fa-bolt brand-icon"></i> Fit<span>Pro</span></a>
   <c:if test="${not empty sessionScope.user}">
     <nav>
-      <a href="${ctx}/app/dashboard">Dashboard</a>
-      <a href="${ctx}/app/workouts">Workouts</a>
-      <c:if test="${!sessionScope.user.trainer}"><a href="${ctx}/app/progress">My Progress</a></c:if>
-      <a class="logout" href="${ctx}/app/logout">Logout (<c:out value="${sessionScope.user.fullName}"/>)</a>
+      <a href="${ctx}/app/dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a href="${ctx}/app/workouts"><i class="fa-solid fa-dumbbell"></i> Workouts</a>
+      <c:if test="${!sessionScope.user.trainer}">
+        <a href="${ctx}/app/progress"><i class="fa-solid fa-fire"></i> My Progress</a>
+      </c:if>
+      <c:if test="${sessionScope.user.trainer}">
+        <a href="${ctx}/app/admin" class="admin-link"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
+      </c:if>
+      <a class="logout" href="${ctx}/app/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout (<c:out value="${sessionScope.user.fullName}"/>)</a>
     </nav>
   </c:if>
 </header>
 <main class="container">
-  <c:if test="${not empty error}"><div class="alert error"><c:out value="${error}"/></div></c:if>
-  <c:if test="${not empty success}"><div class="alert success"><c:out value="${success}"/></div></c:if>
+  <c:if test="${not empty error}"><div class="alert error"><i class="fa-solid fa-circle-exclamation"></i> <c:out value="${error}"/></div></c:if>
+  <c:if test="${not empty success}"><div class="alert success"><i class="fa-solid fa-circle-check"></i> <c:out value="${success}"/></div></c:if>

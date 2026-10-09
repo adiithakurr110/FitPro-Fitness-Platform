@@ -41,7 +41,8 @@ public class UserDAO implements BaseDAO<User, Integer> {
                 return rs.next() ? Optional.of(map(rs)) : Optional.empty();
             }
         } catch (SQLException e) {
-            throw new AppException("Could not look up the user.", e);
+            System.err.println("[UserDAO findByEmail Error] " + e.getMessage());
+            throw new AppException("Could not look up the user: " + e.getMessage(), e);
         }
     }
 

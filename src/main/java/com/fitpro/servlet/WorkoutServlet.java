@@ -34,7 +34,7 @@ public class WorkoutServlet extends HttpServlet {
         try {
             if ("enroll".equals(action)) {
                 service.enroll(user, Integer.parseInt(req.getParameter("workoutId")));
-                req.setAttribute("success", "You are enrolled! Find it on your dashboard.");
+                req.setAttribute("success", "You are enrolled! Your workout has been added to your dashboard.");
             } else if ("create".equals(action)) {
                 service.publish(user, req.getParameter("title"), req.getParameter("description"),
                         req.getParameter("type"), req.getParameter("level"),

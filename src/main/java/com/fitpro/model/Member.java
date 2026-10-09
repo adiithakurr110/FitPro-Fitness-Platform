@@ -1,6 +1,6 @@
 package com.fitpro.model;
 
-/** A person who enrols in programs and logs training sessions. */
+/** A person who enrolls in programs and logs training sessions. */
 public class Member extends User {
     @Override
     public String getRole() { return "MEMBER"; }

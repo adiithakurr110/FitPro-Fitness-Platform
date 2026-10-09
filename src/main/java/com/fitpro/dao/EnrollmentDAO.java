@@ -1,6 +1,7 @@
 package com.fitpro.dao;
 
 import com.fitpro.exception.AppException;
+import com.fitpro.model.EnrollmentDetail;
 import com.fitpro.model.Workout;
 import com.fitpro.util.DBConnection;
 
@@ -15,14 +16,17 @@ public class EnrollmentDAO {
 
     /** @return true if enrolled now, false if the member was already enrolled. */
     public boolean enroll(int userId, int workoutId) throws AppException {
-        String sql = "INSERT IGNORE INTO enrollments (user_id, workout_id) VALUES (?, ?)";
+        if (findEnrolledIds(userId).contains(workoutId)) {
+            return false;
+        }
+        String sql = "INSERT INTO enrollments (user_id, workout_id) VALUES (?, ?)";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, workoutId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new AppException("Could not enrol in the workout.", e);
+            throw new AppException("Could not enroll in the workout.", e);
         }
     }
 
@@ -38,7 +42,7 @@ public class EnrollmentDAO {
             }
             return ids;
         } catch (SQLException e) {
-            throw new AppException("Could not load enrolments.", e);
+            throw new AppException("Could not load enrollments.", e);
         }
     }
 
@@ -50,5 +54,35 @@ public class EnrollmentDAO {
             workoutDAO.findById(id).ifPresent(result::add);
         }
         return result;
+    }
+
+    /** Returns all enrollment details for Admin / Trainer portal reporting. */
+    public List<EnrollmentDetail> findAllEnrollmentDetails() throws AppException {
+        String sql = "SELECT e.id, e.user_id, u.full_name AS user_name, u.email AS user_email, " +
+                     "e.workout_id, w.title AS workout_title, w.type AS workout_type, e.enrolled_at " +
+                     "FROM enrollments e " +
+                     "JOIN users u ON e.user_id = u.id " +
+                     "JOIN workouts w ON e.workout_id = w.id " +
+                     "ORDER BY e.id DESC";
+        List<EnrollmentDetail> list = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                EnrollmentDetail d = new EnrollmentDetail();
+                d.setId(rs.getInt("id"));
+                d.setUserId(rs.getInt("user_id"));
+                d.setUserName(rs.getString("user_name"));
+                d.setUserEmail(rs.getString("user_email"));
+                d.setWorkoutId(rs.getInt("workout_id"));
+                d.setWorkoutTitle(rs.getString("workout_title"));
+                d.setWorkoutType(rs.getString("workout_type"));
+                d.setEnrolledAt(rs.getString("enrolled_at"));
+                list.add(d);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new AppException("Could not load enrollment records for admin portal.", e);
+        }
     }
 }

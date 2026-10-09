@@ -10,3 +10,8 @@ target/
 .DS_Store
 # Local DB credentials override (keep db.properties generic in the repo)
 src/main/resources/db.local.properties
+
+# Embedded runtime database and local tools
+data/
+tools/
+*.log

@@ -1,6 +1,5 @@
 -- =====================================================
--- FitPro database schema + sample data (MySQL 8)
--- Run:  mysql -u root -p < database/schema.sql
+-- FitPro database schema + sample data
 -- =====================================================
 CREATE DATABASE IF NOT EXISTS fitpro CHARACTER SET utf8mb4;
 USE fitpro;
@@ -16,7 +15,7 @@ CREATE TABLE users (
     full_name     VARCHAR(100) NOT NULL,
     email         VARCHAR(120) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    role          ENUM('MEMBER','TRAINER') NOT NULL DEFAULT 'MEMBER',
+    role          VARCHAR(20) NOT NULL DEFAULT 'MEMBER',
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -24,10 +23,10 @@ CREATE TABLE workouts (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     title        VARCHAR(120) NOT NULL,
     description  VARCHAR(500),
-    type         ENUM('CARDIO','STRENGTH','YOGA') NOT NULL,
-    level        ENUM('BEGINNER','INTERMEDIATE','ADVANCED') NOT NULL,
+    type         VARCHAR(20) NOT NULL,
+    level        VARCHAR(20) NOT NULL,
     duration_min INT NOT NULL,
-    met_value    DOUBLE NOT NULL,          -- intensity used for calorie maths
+    met_value    DOUBLE NOT NULL,
     trainer_id   INT NULL,
     FOREIGN KEY (trainer_id) REFERENCES users(id) ON DELETE SET NULL
 );
@@ -37,7 +36,7 @@ CREATE TABLE enrollments (
     user_id     INT NOT NULL,
     workout_id  INT NOT NULL,
     enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_user_workout (user_id, workout_id),
+    CONSTRAINT uq_user_workout UNIQUE (user_id, workout_id),
     FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
 );

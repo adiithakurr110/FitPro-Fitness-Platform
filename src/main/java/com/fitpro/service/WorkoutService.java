@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-/** Business rules for the workout catalogue and enrolments. */
+/** Business rules for the workout catalogue and enrollments. */
 public class WorkoutService {
     private static final List<String> TYPES = Arrays.asList("CARDIO", "STRENGTH", "YOGA");
     private static final List<String> LEVELS = Arrays.asList("BEGINNER", "INTERMEDIATE", "ADVANCED");
@@ -34,7 +34,7 @@ public class WorkoutService {
     }
 
     public void enroll(User user, int workoutId) throws AppException {
-        if (user.isTrainer()) throw new AppException("Trainers cannot enrol in programs.");
+        if (user.isTrainer()) throw new AppException("Trainers cannot enroll in programs.");
         if (!workoutDAO.findById(workoutId).isPresent()) throw new AppException("Workout not found.");
         if (!enrollmentDAO.enroll(user.getId(), workoutId)) throw new AppException("You are already enrolled in this program.");
         NotificationService.getInstance().sendAsync(user.getEmail(), "You joined a new program. Let's go!");

@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * MULTITHREADING + SYNCHRONIZATION demo.
- * Notifications (welcome message, enrolment confirmation) are "sent" on a small
+ * Notifications (welcome message, enrollment confirmation) are "sent" on a small
  * thread pool so the web request never waits for them. The shared counter is
  * protected with synchronized methods because several pool threads update it.
  *
