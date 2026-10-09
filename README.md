@@ -68,18 +68,6 @@ java -cp "target/classes;target/fitpro/WEB-INF/lib/*" com.fitpro.gui.FitProAdmin
 ### 4. Database Configuration (Dual-Engine)
 The app runs **out-of-the-box with zero configuration** using the embedded **H2 Database** (`./data/fitpro_db.mv.db`), automatically populating all tables and sample programs on startup.
 
-If you wish to connect to a local **MySQL 8** server:
-1. Open `src/main/resources/db.properties`:
-   ```properties
-   db.driver=com.mysql.cj.jdbc.Driver
-   db.url=jdbc:mysql://localhost:3306/fitpro?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-   db.user=root
-   db.password=your_password
-   ```
-2. Import schema (optional, auto-initialization will also run automatically):
-   ```bash
-   mysql -u root -p < database/schema.sql
-   ```
 
 ---
 
@@ -124,29 +112,7 @@ fitpro/
 
 ---
 
-## 🏆 Marking Rubric Mapping
 
-### Track 1: Java Web Based Projects Marking Rubric
-
-| Rubric Item | Marks | Where it is Implemented in FitPro |
-|---|:---:|---|
-| **Problem Understanding & Solution Design** | **8 / 8** | Complete fitness platform with role-based member training, program enrollment, coach publishing, and admin governance. Layered MVC design with clean separation of concerns. |
-| **Core Java Concepts** | **10 / 10** | • **Inheritance**: `User` &rarr; `Member`, `Trainer`; `Workout` &rarr; `CardioWorkout`, `StrengthWorkout`, `YogaWorkout`.<br>• **Polymorphism**: `Workout.caloriesBurned()`, `User.getWelcomeMessage()`.<br>• **Interfaces**: `CalorieCalculable`, `BaseDAO<T, ID>`.<br>• **Collections & Generics**: Generic `BaseDAO`, `List`, `Set`, `Map` (`TreeMap`), Streams, and Lambdas in `ProgressService`.<br>• **Multithreading**: `NotificationService` thread pool (`ExecutorService`) & `synchronized`.<br>• **Exception Handling**: Custom checked `AppException` wrapping `SQLException`. |
-| **Database Integration (JDBC)** | **8 / 8** | `DBConnection` loads driver via `Class.forName()`, manages connections with try-with-resources, executes parameterized `PreparedStatement` queries, and handles auto-generated primary keys. |
-| **Servlets & Web Integration** | **7 / 7** | 7 Servlets (`@WebServlet`), `AuthFilter` (`@WebFilter`), `AppContextListener` (`@WebListener`), `HttpSession` management, and JSP/JSTL dynamic views. |
-
----
-
-### Track 2: Java GUI Based Projects Marking Rubric
-
-| Rubric Item | Marks | Where it is Implemented in FitPro |
-|---|:---:|---|
-| **OOP Implementation** | **10 / 10** | Polymorphism in `caloriesBurned()`, Inheritance in models and `FitProAdminGUI extends JFrame`, Interfaces (`CalorieCalculable`, `ActionListener`), custom `AppException`. |
-| **Collections & Generics** | **6 / 6** | Generic `BaseDAO<T, ID>`, `List<EnrollmentDetail>`, `Set<Integer>` fast lookup, `TreeMap<String, Double>` sorted calorie breakdown, Java Streams. |
-| **Multithreading & Synchronization** | **4 / 4** | • `NotificationService` thread pool (`Executors.newFixedThreadPool(2)`) with `synchronized int increment()` shared counter.<br>• `FitProAdminGUI` multithreaded `SwingWorker` fetching database records on background worker thread to keep the Swing UI responsive. |
-| **Classes for Database Operations** | **7 / 7** | `UserDAO`, `WorkoutDAO`, `EnrollmentDAO`, `ProgressDAO` implementing CRUD operations with SQL joins. |
-| **Database Connectivity (JDBC)** | **3 / 3** | `DBConnection.getConnection()` with properties file configuration and environment variable overrides. |
-| **Implement JDBC for Database Connectivity** | **3 / 3** | Parameterized queries with `PreparedStatement`, transaction safety, and auto-fallback between MySQL 8 and H2. |
 
 ---
 
@@ -158,22 +124,5 @@ fitpro/
 
 ---
 
-## 🐙 How to Push to Your GitHub Repository
 
-```bash
-# 1. Check git status
-git status
 
-# 2. Stage all files
-git add .
-
-# 3. Commit your changes
-git commit -m "Complete FitPro project: Enrolled workouts, Admin portal, Desktop GUI, Presentation & Tests"
-
-# 4. Link your remote GitHub repository
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-
-# 5. Push to GitHub
-git branch -M main
-git push -u origin main
-```
