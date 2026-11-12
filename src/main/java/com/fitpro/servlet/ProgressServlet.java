@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
-/** Members log finished sessions and see their history. */
+/** Members log finished sessions, see their history, and export progress reports. */
 @WebServlet("/app/progress")
 public class ProgressServlet extends HttpServlet {
     private final ProgressService progressService = new ProgressService();
@@ -22,7 +24,37 @@ public class ProgressServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
+        String action = req.getParameter("action");
+
+        // Innovation feature: Export session logs to CSV report
+        if ("export".equalsIgnoreCase(action) && user != null && !user.isTrainer()) {
+            exportCsv(resp, user.getId());
+            return;
+        }
+
         render(req, resp, user);
+    }
+
+    private void exportCsv(HttpServletResponse resp, int userId) throws IOException {
+        resp.setContentType("text/csv; charset=UTF-8");
+        resp.setHeader("Content-Disposition", "attachment; filename=\"fitpro_progress_report.csv\"");
+        try {
+            List<ProgressLog> logs = progressService.history(userId);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.println("Date,Workout Title,Duration (min),Body Weight (kg),Calories Burned (kcal)");
+                for (ProgressLog log : logs) {
+                    String title = log.getWorkoutTitle() != null ? log.getWorkoutTitle().replace("\"", "\"\"") : "Workout";
+                    writer.printf("%s,\"%s\",%d,%.1f,%.1f%n",
+                            log.getLoggedOn(),
+                            title,
+                            log.getMinutes(),
+                            log.getWeightKg(),
+                            log.getCalories());
+                }
+            }
+        } catch (AppException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not export logs: " + e.getMessage());
+        }
     }
 
     @Override

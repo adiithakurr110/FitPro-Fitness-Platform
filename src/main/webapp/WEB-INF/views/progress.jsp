@@ -42,7 +42,14 @@
     </div>
 
     <div class="card history-card">
-      <h2><i class="fa-solid fa-clock-rotate-left"></i> Session History</h2>
+      <div class="section-title-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="margin: 0;"><i class="fa-solid fa-clock-rotate-left"></i> Session History</h2>
+        <c:if test="${not empty logs}">
+          <a href="${ctx}/app/progress?action=export" class="btn outline-btn small-btn" title="Download CSV Report">
+            <i class="fa-solid fa-file-arrow-down"></i> Export CSV Report
+          </a>
+        </c:if>
+      </div>
       <c:choose>
         <c:when test="${empty logs}">
           <p class="muted">No sessions logged yet. Log your first workout session above!</p>

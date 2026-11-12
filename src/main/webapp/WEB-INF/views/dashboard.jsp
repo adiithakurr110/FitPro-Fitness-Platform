@@ -171,6 +171,46 @@
         </c:choose>
       </div>
     </div>
+
+    <!-- Section: Quick Interactive BMI & Fitness Target Calculator -->
+    <div class="card bmi-calculator-section" style="margin-top: 24px;">
+      <div class="section-title-bar" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h2 style="margin: 0;"><i class="fa-solid fa-calculator text-primary"></i> Interactive BMI & Health Target Calculator</h2>
+        <span class="badge CARDIO" style="font-size: 0.8rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> Instant Tool</span>
+      </div>
+      <p class="muted" style="margin-top: 0; margin-bottom: 20px;">Calculate your Body Mass Index (BMI) and discover customized daily calorie targets.</p>
+      <div class="grid three" style="align-items: flex-end; gap: 16px;">
+        <div>
+          <label style="font-weight: 600; display: block; margin-bottom: 6px;">Height (cm)</label>
+          <input type="number" id="calcHeight" placeholder="e.g. 175" min="100" max="250" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+        <div>
+          <label style="font-weight: 600; display: block; margin-bottom: 6px;">Weight (kg)</label>
+          <input type="number" id="calcWeight" placeholder="e.g. 70" min="30" max="250" step="0.5" value="${summary.latestWeight > 0 ? summary.latestWeight : ''}" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+        <div>
+          <button type="button" id="btnCalculateBMI" class="btn primary-btn full-width" style="height: 42px;">
+            <i class="fa-solid fa-bolt"></i> Compute BMI
+          </button>
+        </div>
+      </div>
+      <div id="bmiResultBox" style="display: none; margin-top: 20px; padding: 16px 20px; border-radius: 12px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <span style="font-size: 0.9rem; color: var(--muted); display: block;">Your Calculated BMI</span>
+            <strong id="bmiValueText" style="font-size: 1.6rem; color: var(--dark);">-</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.9rem; color: var(--muted); display: block;">Health Category</span>
+            <span id="bmiCategoryBadge" class="badge" style="font-size: 0.95rem;">-</span>
+          </div>
+          <div>
+            <span style="font-size: 0.9rem; color: var(--muted); display: block;">Recommended Daily Active Burn</span>
+            <strong id="bmiTargetCalText" style="font-size: 1.1rem; color: var(--primary);">-</strong>
+          </div>
+        </div>
+      </div>
+    </div>
   </c:otherwise>
 </c:choose>
 

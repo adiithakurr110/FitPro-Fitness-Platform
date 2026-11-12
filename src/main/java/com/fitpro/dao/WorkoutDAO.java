@@ -28,7 +28,11 @@ public class WorkoutDAO implements BaseDAO<Workout, Integer> {
             ps.setString(4, w.getLevel());
             ps.setInt(5, w.getDurationMin());
             ps.setDouble(6, w.getMetValue());
-            ps.setInt(7, w.getTrainerId());
+            if (w.getTrainerId() > 0) {
+                ps.setInt(7, w.getTrainerId());
+            } else {
+                ps.setNull(7, java.sql.Types.INTEGER);
+            }
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new AppException("Could not save the workout.", e);

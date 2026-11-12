@@ -66,6 +66,15 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.3.2</version>
       </plugin>
+      <!-- Plugin to run Desktop Swing GUI: mvn compile exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <mainClass>com.fitpro.gui.FitProAdminGUI</mainClass>
+        </configuration>
+      </plugin>
       <!-- Lets you run the app with:  mvn package cargo:run  (downloads Tomcat 9 automatically) -->
       <plugin>
         <groupId>org.codehaus.cargo</groupId>

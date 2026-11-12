@@ -10,11 +10,16 @@
   </div>
 </div>
 
-<div class="filters">
-  <a class="chip ${empty activeType ? 'active' : ''}" href="${ctx}/app/workouts"><i class="fa-solid fa-grid-2"></i> All Categories</a>
-  <a class="chip ${activeType == 'CARDIO' ? 'active' : ''}" href="${ctx}/app/workouts?type=CARDIO"><i class="fa-solid fa-heart-pulse"></i> Cardio</a>
-  <a class="chip ${activeType == 'STRENGTH' ? 'active' : ''}" href="${ctx}/app/workouts?type=STRENGTH"><i class="fa-solid fa-dumbbell"></i> Strength</a>
-  <a class="chip ${activeType == 'YOGA' ? 'active' : ''}" href="${ctx}/app/workouts?type=YOGA"><i class="fa-solid fa-spa"></i> Yoga</a>
+<div class="search-filter-bar" style="display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
+  <div class="filters" style="margin-bottom: 0;">
+    <a class="chip ${empty activeType ? 'active' : ''}" href="${ctx}/app/workouts"><i class="fa-solid fa-grid-2"></i> All Categories</a>
+    <a class="chip ${activeType == 'CARDIO' ? 'active' : ''}" href="${ctx}/app/workouts?type=CARDIO"><i class="fa-solid fa-heart-pulse"></i> Cardio</a>
+    <a class="chip ${activeType == 'STRENGTH' ? 'active' : ''}" href="${ctx}/app/workouts?type=STRENGTH"><i class="fa-solid fa-dumbbell"></i> Strength</a>
+    <a class="chip ${activeType == 'YOGA' ? 'active' : ''}" href="${ctx}/app/workouts?type=YOGA"><i class="fa-solid fa-spa"></i> Yoga</a>
+  </div>
+  <div class="search-wrapper" style="position: relative; min-width: 280px; flex: 1; max-width: 400px;">
+    <input type="text" id="workoutSearch" placeholder="Search workouts by name or coach..." class="search-input" style="width: 100%; padding: 10px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); font-size: 0.95rem; outline: none; box-shadow: var(--shadow);">
+  </div>
 </div>
 
 <c:if test="${sessionScope.user.trainer}">

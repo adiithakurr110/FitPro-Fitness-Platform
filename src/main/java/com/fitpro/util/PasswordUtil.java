@@ -22,6 +22,7 @@ public final class PasswordUtil {
     }
 
     public static boolean verify(String password, String stored) {
+        if (password == null || stored == null) return false;
         String[] parts = stored.split(":");
         if (parts.length != 2) return false;
         byte[] salt = Base64.getDecoder().decode(parts[0]);
