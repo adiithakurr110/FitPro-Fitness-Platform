@@ -355,6 +355,18 @@ If you prefer connecting to an external **MySQL 8** server:
 
 ---
 
+## 👥 Team Information & Collaboration Matrix (3 Members)
+
+| Team Member | Roll Number | Primary Role | Key Modules Owned & Deliverables |
+|---|---|---|---|
+| **Aditya Singh** *(Team Lead)* | 25scse1180171 | **Full-Stack & MVC Architecture Lead** | • Core MVC Controllers: 7 HTTP Servlets (*Servlet.java)<br>• Security & Authentication: AuthFilter.java, session fixation defense, and PBKDF2 hashing<br>• CSV Progress Report Exporter (/app/progress?action=export)<br>• Git repository orchestration, release tags, and Maven packaging |
+| **Manik** | 25scse1180216 | **Database & Persistence Specialist** | • Relational Schema Design: database/schema.sql (4 normalized tables + sample programs)<br>• Zero-Config Dual-Engine JDBC: DBConnection.java (MySQL 8 + Auto H2 fallback)<br>• Data Access Object (DAO) Tier: UserDAO, WorkoutDAO, EnrollmentDAO, ProgressDAO<br>• Custom checked exception architecture: AppException.java |
+| **Harshit Vats** | 25scse1180097 | **Frontend UX, Desktop GUI & QA Engineer** | • Desktop Administration GUI: FitProAdminGUI.java (Java Swing with SwingWorker multithreading)<br>• Responsive Design System: style.css (Dark theme, CSS Grid & Flexbox)<br>• Client-Side Features: pp.js (Live catalog search, interactive BMI calculator, bar animations)<br>• Comprehensive Quality Assurance: 32 JUnit 5 Automated Tests (100% pass rate) |
+
+*Detailed collaboration workflow, Git branching rules, and sprint breakdown are documented in [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).*
+
+---
+
 ## 📑 Project Presentation & Deliverables
 
 - **PowerPoint Presentation Deck**: [`docs/FitPro_Presentation_v3.pptx`](docs/FitPro_Presentation_v3.pptx)
