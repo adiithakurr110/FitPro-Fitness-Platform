@@ -34,16 +34,16 @@ public class WorkoutService {
     }
 
     public void enroll(User user, int workoutId) throws AppException {
-        if (user.isTrainer()) throw new AppException("Trainers cannot enroll in programs.");
+        if (user.isTrainer() || user.isAdmin()) throw new AppException("Trainers and administrators cannot enroll in programs.");
         if (!workoutDAO.findById(workoutId).isPresent()) throw new AppException("Workout not found.");
         if (!enrollmentDAO.enroll(user.getId(), workoutId)) throw new AppException("You are already enrolled in this program.");
         NotificationService.getInstance().sendAsync(user.getEmail(), "You joined a new program. Let's go!");
     }
 
-    /** Trainer-only: validates and publishes a new program. */
+    /** Trainer or Admin: validates and publishes a new program. */
     public void publish(User trainer, String title, String description, String type,
                         String level, String durationText, String metText) throws AppException {
-        if (!trainer.isTrainer()) throw new AppException("Only trainers can publish programs.");
+        if (!trainer.isTrainer() && !trainer.isAdmin()) throw new AppException("Only trainers and administrators can publish programs.");
         if (title == null || title.trim().length() < 3) throw new AppException("Title must be at least 3 characters.");
         if (type == null || !TYPES.contains(type.toUpperCase())) throw new AppException("Choose a valid type.");
         if (level == null || !LEVELS.contains(level.toUpperCase())) throw new AppException("Choose a valid level.");
@@ -67,5 +67,11 @@ public class WorkoutService {
         w.setMetValue(met);
         w.setTrainerId(trainer.getId());
         workoutDAO.create(w);
+    }
+
+    /** Trainer or Admin: deletes an existing workout program. */
+    public void delete(User user, int workoutId) throws AppException {
+        if (!user.isTrainer() && !user.isAdmin()) throw new AppException("Only trainers and administrators can delete programs.");
+        workoutDAO.delete(workoutId);
     }
 }

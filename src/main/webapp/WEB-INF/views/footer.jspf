@@ -1,5 +1,52 @@
 </main>
-<footer class="footer">FitPro &copy; 2026 &middot; Online Fitness Training Platform &middot; Java Servlets + JSP + JDBC</footer>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-nav-grid">
+      <div class="footer-col">
+        <h4>Explore Platform</h4>
+        <ul>
+          <li><a href="${ctx}/app/workouts">Workout Catalogue</a></li>
+          <li><a href="${ctx}/app/dashboard">Personal Dashboard</a></li>
+          <li><a href="${ctx}/app/progress">Session Progress</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Roles & Portals</h4>
+        <ul>
+          <li><a href="${ctx}/login">Member Portal</a></li>
+          <li><a href="${ctx}/login">Trainer Studio</a></li>
+          <li><a href="${ctx}/app/admin">Administration Center</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Technology Stack</h4>
+        <ul>
+          <li><a href="javascript:void(0)">Java EE Servlets 4.0</a></li>
+          <li><a href="javascript:void(0)">JavaServer Pages (JSP)</a></li>
+          <li><a href="javascript:void(0)">JDBC & Connection Pooling</a></li>
+          <li><a href="javascript:void(0)">H2 & MySQL Relational DB</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>FitPro Identity</h4>
+        <p style="font-size: 0.8rem; line-height: 1.5; color: var(--text-secondary); margin-bottom: 8px;">
+          Minimal, elegant fitness technology engineered with strict Object-Oriented design principles and robust Java backend services.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>FitPro &copy; 2026. Built with Java, Servlets, JSP &amp; JDBC.</div>
+      <div style="display: flex; gap: 20px;">
+        <a href="${ctx}/#features">Features</a>
+        <a href="${ctx}/#how-it-works">Architecture</a>
+        <a href="${ctx}/login">Sign In</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script src="${ctx}/js/app.js"></script>
 </body>
 </html>

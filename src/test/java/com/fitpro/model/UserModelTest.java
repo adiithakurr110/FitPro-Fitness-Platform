@@ -7,19 +7,29 @@ import org.junit.jupiter.api.Test;
 public class UserModelTest {
 
     @Test
-    @DisplayName("User factory instantiates Member and Trainer polymorphically")
+    @DisplayName("User factory instantiates Member, Trainer, and Admin polymorphically")
     public void testUserFactory() {
         User member = User.of("MEMBER");
         User trainer = User.of("TRAINER");
+        User admin = User.of("ADMIN");
         User defaultUser = User.of("OTHER");
 
         Assertions.assertTrue(member instanceof Member);
         Assertions.assertEquals("MEMBER", member.getRole());
         Assertions.assertFalse(member.isTrainer());
+        Assertions.assertFalse(member.isAdmin());
+        Assertions.assertTrue(member.isMember());
 
         Assertions.assertTrue(trainer instanceof Trainer);
         Assertions.assertEquals("TRAINER", trainer.getRole());
         Assertions.assertTrue(trainer.isTrainer());
+        Assertions.assertFalse(trainer.isAdmin());
+
+        Assertions.assertTrue(admin instanceof Admin);
+        Assertions.assertEquals("ADMIN", admin.getRole());
+        Assertions.assertTrue(admin.isAdmin());
+        Assertions.assertFalse(admin.isTrainer());
+        Assertions.assertFalse(admin.isMember());
 
         Assertions.assertTrue(defaultUser instanceof Member);
     }

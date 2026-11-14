@@ -27,7 +27,7 @@ public class ProgressServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         // Innovation feature: Export session logs to CSV report
-        if ("export".equalsIgnoreCase(action) && user != null && !user.isTrainer()) {
+        if ("export".equalsIgnoreCase(action) && user != null && !user.isTrainer() && !user.isAdmin()) {
             exportCsv(resp, user.getId());
             return;
         }
@@ -60,7 +60,7 @@ public class ProgressServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        if (user.isTrainer()) {
+        if (user.isTrainer() || user.isAdmin()) {
             resp.sendRedirect(req.getContextPath() + "/app/dashboard");
             return;
         }
@@ -80,7 +80,7 @@ public class ProgressServlet extends HttpServlet {
     private void render(HttpServletRequest req, HttpServletResponse resp, User user)
             throws ServletException, IOException {
         try {
-            if (!user.isTrainer()) {
+            if (user != null && !user.isTrainer() && !user.isAdmin()) {
                 req.setAttribute("myWorkouts", workoutService.enrolledWorkouts(user.getId()));
                 req.setAttribute("logs", progressService.history(user.getId()));
             }

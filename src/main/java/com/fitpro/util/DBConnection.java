@@ -6,10 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -55,6 +52,7 @@ public final class DBConnection {
             Connection con = DriverManager.getConnection(url, user, pass);
             if (!initialized) {
                 initTablesIfNeeded(con);
+                seedInitialDataIfNeeded(con);
                 initialized = true;
             }
             return con;
@@ -64,6 +62,7 @@ public final class DBConnection {
             Connection h2Con = getH2Connection();
             if (!initialized) {
                 initTablesIfNeeded(h2Con);
+                seedInitialDataIfNeeded(h2Con);
                 initialized = true;
             }
             return h2Con;
@@ -133,6 +132,86 @@ public final class DBConnection {
             }
         } catch (Exception e) {
             System.err.println("[FitPro] Database auto-init error: " + e.getMessage());
+        }
+    }
+
+    private static void seedInitialDataIfNeeded(Connection con) {
+        try (Statement st = con.createStatement()) {
+            int userCount = 0;
+            try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM users")) {
+                if (rs.next()) userCount = rs.getInt(1);
+            }
+            if (userCount == 0) {
+                System.out.println("[FitPro] Seeding demo accounts (Admin, Trainer, Member) and sample records...");
+                String adminHash = PasswordUtil.hash("admin123");
+                String trainerHash = PasswordUtil.hash("trainer123");
+                String memberHash = PasswordUtil.hash("member123");
+
+                String insertUser = "INSERT INTO users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)";
+                int adminId = 0, trainerId = 0, memberId = 0;
+                try (PreparedStatement ps = con.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, "Alex Vance");
+                    ps.setString(2, "admin@fitpro.com");
+                    ps.setString(3, adminHash);
+                    ps.setString(4, "ADMIN");
+                    ps.executeUpdate();
+                    try (ResultSet k = ps.getGeneratedKeys()) { if (k.next()) adminId = k.getInt(1); }
+
+                    ps.setString(1, "Sarah Connor");
+                    ps.setString(2, "trainer@fitpro.com");
+                    ps.setString(3, trainerHash);
+                    ps.setString(4, "TRAINER");
+                    ps.executeUpdate();
+                    try (ResultSet k = ps.getGeneratedKeys()) { if (k.next()) trainerId = k.getInt(1); }
+
+                    ps.setString(1, "Marcus Wright");
+                    ps.setString(2, "member@fitpro.com");
+                    ps.setString(3, memberHash);
+                    ps.setString(4, "MEMBER");
+                    ps.executeUpdate();
+                    try (ResultSet k = ps.getGeneratedKeys()) { if (k.next()) memberId = k.getInt(1); }
+                }
+
+                if (trainerId > 0) {
+                    try (PreparedStatement ps = con.prepareStatement("UPDATE workouts SET trainer_id = ? WHERE trainer_id IS NULL")) {
+                        ps.setInt(1, trainerId);
+                        ps.executeUpdate();
+                    }
+                }
+
+                if (memberId > 0) {
+                    try (PreparedStatement ps = con.prepareStatement("INSERT INTO enrollments (user_id, workout_id) VALUES (?, ?)")) {
+                        ps.setInt(1, memberId);
+                        ps.setInt(2, 1);
+                        ps.executeUpdate();
+                        ps.setInt(1, memberId);
+                        ps.setInt(2, 2);
+                        ps.executeUpdate();
+                    }
+
+                    try (PreparedStatement ps = con.prepareStatement(
+                            "INSERT INTO progress_logs (user_id, workout_id, minutes, weight_kg, calories, logged_on) VALUES (?, ?, ?, ?, ?, ?)")) {
+                        ps.setInt(1, memberId);
+                        ps.setInt(2, 1);
+                        ps.setInt(3, 30);
+                        ps.setDouble(4, 74.5);
+                        ps.setDouble(5, 260.8);
+                        ps.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now().minusDays(3)));
+                        ps.executeUpdate();
+
+                        ps.setInt(1, memberId);
+                        ps.setInt(2, 2);
+                        ps.setInt(3, 25);
+                        ps.setDouble(4, 74.0);
+                        ps.setDouble(5, 308.3);
+                        ps.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now().minusDays(1)));
+                        ps.executeUpdate();
+                    }
+                }
+                System.out.println("[FitPro] Demo data initialized successfully.");
+            }
+        } catch (Exception e) {
+            System.err.println("[FitPro] Seeding note: " + e.getMessage());
         }
     }
 

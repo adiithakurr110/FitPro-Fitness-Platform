@@ -4,79 +4,146 @@
 <%@ include file="header.jspf" %>
 
 <div class="page-header">
-  <div>
-    <h1><i class="fa-solid fa-dumbbell"></i> Workout Programs</h1>
-    <p class="muted">Discover and enroll in expert-designed fitness programs.</p>
+  <span class="eyebrow"><i class="fa-solid fa-dumbbell"></i> Fitness Catalogue</span>
+  <h1 class="page-title">Curated Training Programs</h1>
+  <p class="page-desc">
+    Explore expert-designed workouts calibrated for progressive overload, aerobic endurance, and mindful mobility.
+  </p>
+</div>
+
+<!-- Search and Category Filters -->
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap;">
+  <div class="filter-bar">
+    <a class="filter-chip ${empty activeType ? 'active' : ''}" href="${ctx}/app/workouts">
+      <i class="fa-solid fa-border-all"></i> All Programs
+    </a>
+    <a class="filter-chip ${activeType == 'CARDIO' ? 'active' : ''}" href="${ctx}/app/workouts?type=CARDIO">
+      <i class="fa-solid fa-heart-pulse"></i> Cardio
+    </a>
+    <a class="filter-chip ${activeType == 'STRENGTH' ? 'active' : ''}" href="${ctx}/app/workouts?type=STRENGTH">
+      <i class="fa-solid fa-dumbbell"></i> Strength
+    </a>
+    <a class="filter-chip ${activeType == 'YOGA' ? 'active' : ''}" href="${ctx}/app/workouts?type=YOGA">
+      <i class="fa-solid fa-spa"></i> Yoga
+    </a>
+  </div>
+
+  <div style="position: relative; min-width: 260px; flex: 1; max-width: 360px;">
+    <input type="text" id="workoutSearch" placeholder="Search by title, coach, or level..." style="padding-left: 38px; border-radius: var(--radius-pill); height: 42px;">
+    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 13px; color: var(--text-tertiary); font-size: 0.9rem;"></i>
   </div>
 </div>
 
-<div class="search-filter-bar" style="display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
-  <div class="filters" style="margin-bottom: 0;">
-    <a class="chip ${empty activeType ? 'active' : ''}" href="${ctx}/app/workouts"><i class="fa-solid fa-grid-2"></i> All Categories</a>
-    <a class="chip ${activeType == 'CARDIO' ? 'active' : ''}" href="${ctx}/app/workouts?type=CARDIO"><i class="fa-solid fa-heart-pulse"></i> Cardio</a>
-    <a class="chip ${activeType == 'STRENGTH' ? 'active' : ''}" href="${ctx}/app/workouts?type=STRENGTH"><i class="fa-solid fa-dumbbell"></i> Strength</a>
-    <a class="chip ${activeType == 'YOGA' ? 'active' : ''}" href="${ctx}/app/workouts?type=YOGA"><i class="fa-solid fa-spa"></i> Yoga</a>
-  </div>
-  <div class="search-wrapper" style="position: relative; min-width: 280px; flex: 1; max-width: 400px;">
-    <input type="text" id="workoutSearch" placeholder="Search workouts by name or coach..." class="search-input" style="width: 100%; padding: 10px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); font-size: 0.95rem; outline: none; box-shadow: var(--shadow);">
-  </div>
-</div>
-
-<c:if test="${sessionScope.user.trainer}">
-  <details class="card publish-card">
-    <summary class="publish-summary"><i class="fa-solid fa-plus-circle"></i> <strong>Publish a New Program</strong></summary>
-    <form method="post" action="${ctx}/app/workouts" class="validate grid two mt-3">
-      <input type="hidden" name="action" value="create">
-      <label>Program Title <input type="text" name="title" minlength="3" placeholder="e.g. 30-Day HIIT Challenge" required></label>
-      <label>Duration (minutes) <input type="number" name="duration" min="5" max="240" value="30" required></label>
-      <label>Category Type
-        <select name="type"><option>CARDIO</option><option>STRENGTH</option><option>YOGA</option></select>
-      </label>
-      <label>Difficulty Level
-        <select name="level"><option>BEGINNER</option><option>INTERMEDIATE</option><option>ADVANCED</option></select>
-      </label>
-      <label>Intensity Level (MET 1-15) <input type="number" name="met" min="1" max="15" step="0.5" value="5" required></label>
-      <label>Description <input type="text" name="description" maxlength="500" placeholder="Brief overview of training routine"></label>
-      <button class="btn primary-btn full-width" type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Publish Program</button>
-    </form>
+<!-- Publisher Drawer for Trainers & Admins -->
+<c:if test="${sessionScope.user.trainer || sessionScope.user.admin}">
+  <details class="card" style="margin-bottom: 28px; cursor: pointer;">
+    <summary style="font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; user-select: none;">
+      <i class="fa-solid fa-plus-circle text-primary"></i> <span>Publish a New Workout Program</span>
+    </summary>
+    <div style="cursor: default; padding-top: 20px;">
+      <form method="post" action="${ctx}/app/workouts" class="validate grid two">
+        <input type="hidden" name="action" value="create">
+        <div class="form-group">
+          <label>Program Title</label>
+          <input type="text" name="title" minlength="3" placeholder="e.g. 30-Day HIIT Metabolism Boost" required>
+        </div>
+        <div class="form-group">
+          <label>Estimated Duration (minutes)</label>
+          <input type="number" name="duration" min="5" max="240" value="30" required>
+        </div>
+        <div class="form-group">
+          <label>Discipline Category</label>
+          <select name="type">
+            <option value="CARDIO">Cardio Endurance</option>
+            <option value="STRENGTH">Strength &amp; Hypertrophy</option>
+            <option value="YOGA">Yoga &amp; Mobility</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Difficulty Tier</label>
+          <select name="level">
+            <option value="BEGINNER">Beginner</option>
+            <option value="INTERMEDIATE">Intermediate</option>
+            <option value="ADVANCED">Advanced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Metabolic Intensity (MET 1.0 – 15.0)</label>
+          <input type="number" name="met" min="1" max="15" step="0.5" value="6.0" required>
+        </div>
+        <div class="form-group">
+          <label>Routine Overview &amp; Instructions</label>
+          <input type="text" name="description" maxlength="500" placeholder="Summary of sets, intervals, or target muscle groups">
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <button class="btn blue-btn full-width" type="submit" style="height: 44px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Program to Platform
+          </button>
+        </div>
+      </form>
+    </div>
   </details>
 </c:if>
 
+<!-- Workouts Grid -->
 <div class="grid three workout-grid">
   <c:forEach var="w" items="${workouts}">
-    <article class="card workout-card">
-      <div class="workout-card-header">
-        <span class="badge <c:out value='${w.type}'/>"><c:out value="${w.type}"/></span>
-        <span class="level-tag"><i class="fa-solid fa-layer-group"></i> <c:out value="${w.level}"/></span>
+    <article class="workout-card">
+      <div>
+        <div class="workout-card-top">
+          <span class="badge <c:out value='${w.type}'/>"><c:out value="${w.type}"/></span>
+          <span class="badge neutral"><i class="fa-solid fa-layer-group"></i> <c:out value="${w.level}"/></span>
+        </div>
+        <h3 class="workout-card-title"><c:out value="${w.title}"/></h3>
+        <p class="workout-card-desc"><c:out value="${w.description}"/></p>
       </div>
-      <h3><c:out value="${w.title}"/></h3>
-      <p class="muted workout-desc"><c:out value="${w.description}"/></p>
-      <div class="workout-meta-bar">
-        <span><i class="fa-regular fa-clock"></i> <c:out value="${w.durationMin}"/> min</span>
-        <span><i class="fa-solid fa-user-ninja"></i> Coach: <c:out value="${w.trainerName}" default="FitPro Team"/></span>
-      </div>
-      <div class="workout-card-footer">
-        <c:if test="${!sessionScope.user.trainer}">
+
+      <div>
+        <div class="workout-meta-ribbon">
+          <span><i class="fa-regular fa-clock"></i> <c:out value="${w.durationMin}"/> min</span>
+          <span><i class="fa-solid fa-user-ninja"></i> <c:out value="${w.trainerName}" default="FitPro Team"/></span>
+        </div>
+
+        <div class="workout-card-action">
           <c:choose>
-            <c:when test="${enrolledIds.contains(w.id)}">
-              <span class="enrolled-badge"><i class="fa-solid fa-circle-check"></i> Enrolled</span>
+            <c:when test="${!sessionScope.user.trainer && !sessionScope.user.admin}">
+              <c:choose>
+                <c:when test="${enrolledIds.contains(w.id)}">
+                  <div class="enrolled-check">
+                    <i class="fa-solid fa-circle-check"></i> Enrolled
+                  </div>
+                </c:when>
+                <c:otherwise>
+                  <form method="post" action="${ctx}/app/workouts">
+                    <input type="hidden" name="action" value="enroll">
+                    <input type="hidden" name="workoutId" value="${w.id}">
+                    <button class="btn primary-btn full-width" type="submit">
+                      <i class="fa-solid fa-plus"></i> Enroll in Program
+                    </button>
+                  </form>
+                </c:otherwise>
+              </c:choose>
             </c:when>
             <c:otherwise>
-              <form method="post" action="${ctx}/app/workouts" class="enroll-form">
-                <input type="hidden" name="action" value="enroll">
+              <form method="post" action="${ctx}/app/workouts" onsubmit="return confirm('Remove this workout program from the catalogue?');">
+                <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="workoutId" value="${w.id}">
-                <button class="btn primary-btn full-width" type="submit"><i class="fa-solid fa-user-plus"></i> Enroll Now</button>
+                <button class="btn outline-btn small-btn full-width" type="submit" style="color: var(--alert-err-text);">
+                  <i class="fa-solid fa-trash-can"></i> Remove Program
+                </button>
               </form>
             </c:otherwise>
           </c:choose>
-        </c:if>
+        </div>
       </div>
     </article>
   </c:forEach>
+
   <c:if test="${empty workouts}">
-    <div class="empty-state full-width">
+    <div class="empty-state" style="grid-column: 1 / -1;">
       <i class="fa-solid fa-magnifying-glass empty-icon"></i>
-      <p class="muted">No programs found for this filter.</p>
+      <h3 style="font-size: 1.15rem; font-weight: 600;">No programs found</h3>
+      <p class="muted">Try adjusting your category filter or search keywords.</p>
     </div>
   </c:if>
 </div>

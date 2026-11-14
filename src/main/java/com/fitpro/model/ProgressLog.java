@@ -8,6 +8,7 @@ public class ProgressLog {
     private int userId;
     private int workoutId;
     private String workoutTitle;
+    private String userName;
     private int minutes;
     private double weightKg;
     private double calories;
@@ -21,6 +22,8 @@ public class ProgressLog {
     public void setWorkoutId(int workoutId) { this.workoutId = workoutId; }
     public String getWorkoutTitle() { return workoutTitle; }
     public void setWorkoutTitle(String workoutTitle) { this.workoutTitle = workoutTitle; }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
     public int getMinutes() { return minutes; }
     public void setMinutes(int minutes) { this.minutes = minutes; }
     public double getWeightKg() { return weightKg; }

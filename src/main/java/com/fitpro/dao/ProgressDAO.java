@@ -56,4 +56,34 @@ public class ProgressDAO {
             throw new AppException("Could not load your progress.", e);
         }
     }
+
+    /** All sessions across all members, newest first, for Trainer & Admin monitoring. */
+    public List<ProgressLog> findAll() throws AppException {
+        String sql = "SELECT p.id, p.user_id, p.workout_id, w.title, p.minutes, p.weight_kg, p.calories, p.logged_on, u.full_name AS user_name "
+                   + "FROM progress_logs p "
+                   + "JOIN workouts w ON p.workout_id = w.id "
+                   + "JOIN users u ON p.user_id = u.id "
+                   + "ORDER BY p.logged_on DESC, p.id DESC";
+        List<ProgressLog> logs = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ProgressLog p = new ProgressLog();
+                p.setId(rs.getInt("id"));
+                p.setUserId(rs.getInt("user_id"));
+                p.setWorkoutId(rs.getInt("workout_id"));
+                p.setWorkoutTitle(rs.getString("title"));
+                p.setMinutes(rs.getInt("minutes"));
+                p.setWeightKg(rs.getDouble("weight_kg"));
+                p.setCalories(rs.getDouble("calories"));
+                p.setLoggedOn(rs.getDate("logged_on").toLocalDate());
+                p.setUserName(rs.getString("user_name"));
+                logs.add(p);
+            }
+            return logs;
+        } catch (SQLException e) {
+            throw new AppException("Could not load member progress history.", e);
+        }
+    }
 }

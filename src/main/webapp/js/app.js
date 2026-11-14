@@ -1,45 +1,96 @@
-/* FitPro client-side helpers (progressive enhancement; the server validates everything again). */
+/* ==========================================================================
+   FitPro Client-Side Enhancements (Vanilla JS)
+   Accessible, lightweight, responsive, and robust.
+   ========================================================================== */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-  // 1. Animate the dashboard bar chart: width = this workout's share of total calories
-  document.querySelectorAll(".bar .fill").forEach(function (el) {
-    var value = parseFloat(el.dataset.value) || 0;
-    var total = parseFloat(el.dataset.total) || 1;
-    setTimeout(function () { el.style.width = Math.round((value / total) * 100) + "%"; }, 100);
-  });
+  // 1. Mobile Menu Drawer Toggle
+  var mobileToggle = document.querySelector(".mobile-toggle");
+  var mobileDrawer = document.querySelector(".mobile-drawer");
+  if (mobileToggle && mobileDrawer) {
+    mobileToggle.addEventListener("click", function () {
+      var isOpen = mobileDrawer.classList.toggle("open");
+      mobileToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      var icon = mobileToggle.querySelector("i");
+      if (icon) {
+        icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+      }
+    });
+  }
 
-  // 2. Highlight invalid fields before the form is submitted
-  document.querySelectorAll("form.validate").forEach(function (form) {
-    form.addEventListener("submit", function (event) {
-      var ok = true;
-      form.querySelectorAll("input, select").forEach(function (field) {
-        var bad = !field.checkValidity();
-        field.classList.toggle("invalid", bad);
-        if (bad) ok = false;
-      });
-      if (!ok) event.preventDefault();
+  // 2. Password Visibility Toggle
+  document.querySelectorAll(".password-toggle-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var targetId = btn.getAttribute("data-target");
+      var input = targetId ? document.getElementById(targetId) : btn.parentElement.querySelector("input");
+      if (!input) return;
+
+      var isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+
+      var icon = btn.querySelector("i");
+      if (icon) {
+        icon.className = isPassword ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
+      }
     });
   });
 
-  // 3. Fade out success / error messages after a few seconds
-  document.querySelectorAll(".alert").forEach(function (box) {
-    setTimeout(function () { box.style.transition = "opacity .6s"; box.style.opacity = "0"; }, 5000);
+  // 3. Form Validation Feedback
+  document.querySelectorAll("form.validate").forEach(function (form) {
+    form.addEventListener("submit", function (event) {
+      var isValid = true;
+      form.querySelectorAll("input, select, textarea").forEach(function (field) {
+        if (!field.checkValidity()) {
+          field.classList.add("invalid");
+          isValid = false;
+        } else {
+          field.classList.remove("invalid");
+        }
+      });
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
   });
 
-  // 4. Instant Live Search on Workout Catalogue
+  // 4. Dismissible Alerts with smooth fade
+  document.querySelectorAll(".alert").forEach(function (alertBox) {
+    setTimeout(function () {
+      alertBox.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+      alertBox.style.opacity = "0";
+      alertBox.style.transform = "translateY(-6px)";
+      setTimeout(function () {
+        if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
+      }, 650);
+    }, 6000);
+  });
+
+  // 5. Chart Bar Fill Animation
+  document.querySelectorAll(".chart-bar-fill").forEach(function (fillBar) {
+    var width = fillBar.getAttribute("data-width");
+    if (width) {
+      fillBar.style.width = "0%";
+      setTimeout(function () {
+        fillBar.style.width = width;
+      }, 150);
+    }
+  });
+
+  // 6. Live Instant Search for Workout Catalogue
   var searchInput = document.getElementById("workoutSearch");
   if (searchInput) {
     searchInput.addEventListener("input", function () {
-      var term = searchInput.value.toLowerCase().trim();
+      var query = searchInput.value.toLowerCase().trim();
       var cards = document.querySelectorAll(".workout-card");
       var visibleCount = 0;
 
       cards.forEach(function (card) {
-        var title = (card.querySelector("h3") ? card.querySelector("h3").textContent : "").toLowerCase();
-        var desc = (card.querySelector(".workout-desc") ? card.querySelector(".workout-desc").textContent : "").toLowerCase();
-        var meta = (card.querySelector(".workout-meta-bar") ? card.querySelector(".workout-meta-bar").textContent : "").toLowerCase();
+        var title = (card.querySelector(".workout-card-title") ? card.querySelector(".workout-card-title").textContent : "").toLowerCase();
+        var desc = (card.querySelector(".workout-card-desc") ? card.querySelector(".workout-card-desc").textContent : "").toLowerCase();
+        var meta = (card.querySelector(".workout-meta-ribbon") ? card.querySelector(".workout-meta-ribbon").textContent : "").toLowerCase();
 
-        var match = title.includes(term) || desc.includes(term) || meta.includes(term);
+        var match = title.includes(query) || desc.includes(query) || meta.includes(query);
         card.style.display = match ? "" : "none";
         if (match) visibleCount++;
       });
@@ -47,24 +98,29 @@ document.addEventListener("DOMContentLoaded", function () {
       var emptyNotice = document.querySelector(".empty-search-notice");
       if (!emptyNotice) {
         emptyNotice = document.createElement("div");
-        emptyNotice.className = "empty-search-notice full-width empty-state";
-        emptyNotice.style.display = "none";
-        emptyNotice.innerHTML = '<i class="fa-solid fa-magnifying-glass empty-icon"></i><p class="muted">No matching workouts found for your query.</p>';
+        emptyNotice.className = "empty-search-notice empty-state";
+        emptyNotice.innerHTML = '<i class="fa-solid fa-magnifying-glass empty-icon"></i><p class="muted">No matching workouts found.</p>';
         var grid = document.querySelector(".workout-grid");
         if (grid) grid.appendChild(emptyNotice);
       }
-      emptyNotice.style.display = (visibleCount === 0 && term !== "") ? "block" : "none";
+      if (emptyNotice) {
+        emptyNotice.style.display = (visibleCount === 0 && query !== "") ? "block" : "none";
+      }
     });
   }
 
-  // 5. Interactive BMI & Calorie Target Calculator
-  var btnCalc = document.getElementById("btnCalculateBMI");
-  if (btnCalc) {
-    btnCalc.addEventListener("click", function () {
-      var heightCm = parseFloat(document.getElementById("calcHeight").value);
-      var weightKg = parseFloat(document.getElementById("calcWeight").value);
+  // 7. Interactive BMI & Calorie Target Calculator
+  var calcBtn = document.getElementById("btnCalculateBMI");
+  if (calcBtn) {
+    calcBtn.addEventListener("click", function () {
+      var heightInput = document.getElementById("calcHeight");
+      var weightInput = document.getElementById("calcWeight");
+      if (!heightInput || !weightInput) return;
 
-      if (!heightCm || heightCm <= 0 || !weightKg || weightKg <= 0) {
+      var heightCm = parseFloat(heightInput.value);
+      var weightKg = parseFloat(weightInput.value);
+
+      if (!heightCm || heightCm <= 50 || heightCm > 260 || !weightKg || weightKg <= 20 || weightKg > 350) {
         alert("Please enter a valid height (cm) and weight (kg).");
         return;
       }
@@ -75,37 +131,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
       var category = "";
       var badgeClass = "";
-      var targetBurn = "";
+      var targetText = "";
 
       if (bmi < 18.5) {
         category = "Underweight";
         badgeClass = "YOGA";
-        targetBurn = "300 - 400 kcal / day (Focus on Strength)";
+        targetText = "300 – 450 kcal / day (Focus on Strength & Nutrition)";
       } else if (bmi < 25.0) {
         category = "Normal Weight";
         badgeClass = "CARDIO";
-        targetBurn = "400 - 550 kcal / day (Maintain Fitness)";
+        targetText = "400 – 550 kcal / day (Optimal Maintenance & Stamina)";
       } else if (bmi < 30.0) {
         category = "Overweight";
         badgeClass = "STRENGTH";
-        targetBurn = "500 - 700 kcal / day (Cardio + Strength)";
+        targetText = "500 – 700 kcal / day (Structured Cardio + Hypertrophy)";
       } else {
         category = "Obese";
         badgeClass = "STRENGTH";
-        targetBurn = "600 - 850 kcal / day (Structured Program)";
+        targetText = "600 – 850 kcal / day (Supervised Progressive Regimen)";
       }
 
       var resultBox = document.getElementById("bmiResultBox");
       var valText = document.getElementById("bmiValueText");
       var catBadge = document.getElementById("bmiCategoryBadge");
-      var targetText = document.getElementById("bmiTargetCalText");
+      var calTarget = document.getElementById("bmiTargetCalText");
 
-      valText.textContent = bmiFormatted;
-      catBadge.textContent = category;
-      catBadge.className = "badge " + badgeClass;
-      targetText.textContent = targetBurn;
-
-      resultBox.style.display = "block";
+      if (valText) valText.textContent = bmiFormatted;
+      if (catBadge) {
+        catBadge.textContent = category;
+        catBadge.className = "badge " + badgeClass;
+      }
+      if (calTarget) calTarget.textContent = targetText;
+      if (resultBox) resultBox.style.display = "block";
     });
   }
+
 });

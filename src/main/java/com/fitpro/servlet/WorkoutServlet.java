@@ -40,6 +40,9 @@ public class WorkoutServlet extends HttpServlet {
                         req.getParameter("type"), req.getParameter("level"),
                         req.getParameter("duration"), req.getParameter("met"));
                 req.setAttribute("success", "Program published.");
+            } else if ("delete".equals(action)) {
+                service.delete(user, Integer.parseInt(req.getParameter("workoutId")));
+                req.setAttribute("success", "Program removed successfully.");
             }
         } catch (NumberFormatException e) {
             req.setAttribute("error", "Invalid workout selected.");
@@ -55,7 +58,9 @@ public class WorkoutServlet extends HttpServlet {
             String type = req.getParameter("type");
             req.setAttribute("workouts", service.list(type));
             req.setAttribute("activeType", type == null ? "" : type.toUpperCase());
-            if (!user.isTrainer()) req.setAttribute("enrolledIds", service.enrolledIds(user.getId()));
+            if (!user.isTrainer() && !user.isAdmin()) {
+                req.setAttribute("enrolledIds", service.enrolledIds(user.getId()));
+            }
         } catch (AppException e) {
             req.setAttribute("error", e.getMessage());
         }

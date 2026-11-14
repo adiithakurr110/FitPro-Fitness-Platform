@@ -73,6 +73,31 @@ public class UserDAO implements BaseDAO<User, Integer> {
         }
     }
 
+    /** Updates a user's role (Admin action). */
+    public boolean updateRole(int userId, String newRole) throws AppException {
+        String sql = "UPDATE users SET role = ? WHERE id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, newRole.toUpperCase());
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AppException("Could not update user role.", e);
+        }
+    }
+
+    /** Deletes a user by id. Cascade constraints clean up enrollments and logs. */
+    public boolean delete(int userId) throws AppException {
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AppException("Could not delete user account.", e);
+        }
+    }
+
     /** Maps one row to the right subclass (Member or Trainer). */
     private User map(ResultSet rs) throws SQLException {
         User u = User.of(rs.getString("role"));

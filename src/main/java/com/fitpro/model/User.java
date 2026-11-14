@@ -27,10 +27,15 @@ public abstract class User {
 
     /** Simple factory: builds the right subclass from the DB role string. */
     public static User of(String role) {
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            return new Admin();
+        }
         return "TRAINER".equalsIgnoreCase(role) ? new Trainer() : new Member();
     }
 
-    public boolean isTrainer() { return "TRAINER".equals(getRole()); }
+    public boolean isAdmin() { return "ADMIN".equalsIgnoreCase(getRole()); }
+    public boolean isTrainer() { return "TRAINER".equalsIgnoreCase(getRole()); }
+    public boolean isMember() { return "MEMBER".equalsIgnoreCase(getRole()); }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

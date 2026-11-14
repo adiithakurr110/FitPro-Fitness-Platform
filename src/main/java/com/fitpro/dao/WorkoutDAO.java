@@ -62,6 +62,18 @@ public class WorkoutDAO implements BaseDAO<Workout, Integer> {
         return query(SELECT + "WHERE w.type = ? ORDER BY w.id", type);
     }
 
+    /** Deletes a workout program by id (Admin/Trainer action). */
+    public boolean delete(int workoutId) throws AppException {
+        String sql = "DELETE FROM workouts WHERE id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, workoutId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AppException("Could not delete the workout program.", e);
+        }
+    }
+
     private List<Workout> query(String sql, String param) throws AppException {
         List<Workout> list = new ArrayList<>();
         try (Connection con = DBConnection.getConnection();

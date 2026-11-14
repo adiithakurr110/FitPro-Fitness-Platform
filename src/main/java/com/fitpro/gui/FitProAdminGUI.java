@@ -51,7 +51,7 @@ public class FitProAdminGUI extends JFrame implements ActionListener {
 
         // Header Panel
         JPanel headerPanel = new JPanel(new GridLayout(2, 1, 4, 4));
-        headerPanel.setBackground(new Color(15, 23, 42));
+        headerPanel.setBackground(new Color(29, 29, 31));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
         JLabel titleLabel = new JLabel("FitPro - Online Fitness Training Platform (Admin GUI)");
@@ -60,7 +60,7 @@ public class FitProAdminGUI extends JFrame implements ActionListener {
 
         statsLabel = new JLabel("Loading system statistics...");
         statsLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        statsLabel.setForeground(new Color(56, 189, 248));
+        statsLabel.setForeground(new Color(0, 113, 227));
 
         headerPanel.add(titleLabel);
         headerPanel.add(statsLabel);
@@ -97,8 +97,8 @@ public class FitProAdminGUI extends JFrame implements ActionListener {
 
         openWebButton = new JButton("Open Web App in Browser");
         openWebButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        openWebButton.setBackground(new Color(255, 90, 31));
-        openWebButton.setForeground(Color.BLACK);
+        openWebButton.setBackground(new Color(0, 113, 227));
+        openWebButton.setForeground(Color.WHITE);
         openWebButton.addActionListener(this);
 
         buttonPanel.add(refreshButton);
