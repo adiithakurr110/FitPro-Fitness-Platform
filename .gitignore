@@ -1,6 +1,11 @@
+# Maven Build Outputs
 target/
 *.class
 *.war
+*.jar
+*.ear
+
+# IDE & Editor Configuration
 .idea/
 *.iml
 .classpath
@@ -8,10 +13,24 @@ target/
 .settings/
 .vscode/
 .DS_Store
-# Local DB credentials override (keep db.properties generic in the repo)
+*.suo
+*.ntvs*
+*.njsproj
+
+# Local DB Credentials & Overrides
 src/main/resources/db.local.properties
 
-# Embedded runtime database and local tools
+# Embedded Runtime Database & Trace Files
 data/
+*.mv.db
+*.trace.db
+
+# Bundled Local Tools & Archives
 tools/
+*.zip
+*.tar.gz
+
+# Logs & Temporary Files
 *.log
+temp/
+tmp/

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitPro — Minimalist Fitness Technology</title>
-  <meta name="description" content="FitPro is a full-stack digital fitness training and tracking platform engineered with Java EE Servlets, JDBC, and a minimal Apple-inspired user experience.">
+  <title>FitPro — Minimalist Fitness Technology & Architectural Showcase</title>
+  <meta name="description" content="FitPro is an enterprise Java web and desktop fitness platform engineered with Java EE Servlets, JDBC, and a minimal Apple-inspired user interface.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
@@ -55,12 +55,12 @@
     a { color: var(--accent-blue); text-decoration: none; transition: var(--transition); }
     a:hover { color: var(--accent-blue-hover); }
 
-    /* Translucent Apple Header */
+    /* Translucent Apple Navigation Header */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid var(--hairline);
@@ -69,7 +69,7 @@
       max-width: 1140px;
       margin: 0 auto;
       padding: 0 24px;
-      height: 54px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -148,13 +148,13 @@
     /* Hero Section */
     .landing-hero {
       text-align: center;
-      padding: 80px 20px 60px;
-      max-width: 900px;
+      padding: 72px 20px 54px;
+      max-width: 920px;
       margin: 0 auto;
     }
     .eyebrow {
       display: inline-block;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -162,7 +162,7 @@
       margin-bottom: 12px;
     }
     .landing-hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4.4rem);
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
       font-weight: 700;
       letter-spacing: -0.035em;
       line-height: 1.08;
@@ -170,9 +170,9 @@
       margin-bottom: 18px;
     }
     .landing-hero p {
-      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
       color: var(--text-secondary);
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto 32px;
       line-height: 1.48;
     }
@@ -180,7 +180,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
@@ -219,7 +219,7 @@
     /* Visual Device Showcase */
     .landing-visual-wrap {
       max-width: 1040px;
-      margin: 20px auto 72px;
+      margin: 20px auto 64px;
       background: #ffffff;
       border: 1px solid var(--hairline);
       border-radius: 28px;
@@ -230,7 +230,7 @@
       background: var(--bg-canvas);
       border-radius: 18px;
       border: 1px solid var(--hairline);
-      padding: 36px 32px;
+      padding: 32px 28px;
     }
 
     /* Feature Box */
@@ -314,7 +314,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin: 28px 0;
+      margin: 24px 0 28px;
       flex-wrap: wrap;
     }
     .role-tab-btn {
@@ -332,6 +332,20 @@
       background: var(--dark-btn);
       color: #ffffff;
       border-color: var(--dark-btn);
+    }
+
+    /* Notice callout */
+    .notice-callout {
+      background: var(--bg-subtle);
+      border: 1px solid var(--hairline);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-top: 18px;
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     /* Footer */
@@ -393,12 +407,15 @@
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#workouts">Workouts</a></li>
-      <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="#roles">Three Roles</a></li>
-      <li><a href="#calculator">BMI Tool</a></li>
+      <li><a href="#roles">3-Role Architecture</a></li>
+      <li><a href="#calculator">BMI Calculator</a></li>
+      <li><a href="#deployment">Deployment</a></li>
     </ul>
     <div class="nav-cta-group">
-      <a class="btn primary-btn small-btn" href="#roles">Launch Application</a>
+      <a class="btn outline-btn small-btn" href="docs/FitPro_Presentation_v3.pdf" target="_blank" title="Download Official Presentation Slides">
+        <i class="fa-regular fa-file-pdf"></i> Presentation PDF
+      </a>
+      <a class="btn primary-btn small-btn" href="#deployment">Run Local App</a>
     </div>
   </div>
 </header>
@@ -406,18 +423,21 @@
 <main>
   <!-- Hero Section -->
   <section class="landing-hero">
-    <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> Minimalist Digital Training</span>
+    <span class="eyebrow"><i class="fa-solid fa-layer-group"></i> Architecture &amp; Product Showcase</span>
     <h1>Your fitness. Your pace. Your progress.</h1>
     <p>
-      An elegant, distraction-free fitness platform. Explore curated training programs,
-      track sessions with scientific MET accuracy, and reach your peak performance with certified coaching.
+      An enterprise fitness platform engineered with Java EE Servlets, JDBC, and object-oriented polymorphism,
+      wrapped in an Apple-inspired minimal user experience.
     </p>
     <div class="landing-cta-group">
       <a class="btn primary-btn" href="#roles">
-        <i class="fa-solid fa-arrow-right"></i> Explore Three Roles
+        <i class="fa-solid fa-users"></i> Explore Three Roles
       </a>
       <a class="btn outline-btn" href="#workouts">
-        <i class="fa-solid fa-compass"></i> Explore Workouts
+        <i class="fa-solid fa-compass"></i> Workout Catalogue
+      </a>
+      <a class="btn blue-btn" href="docs/FitPro_Presentation_v3.pdf" target="_blank">
+        <i class="fa-solid fa-file-arrow-down"></i> Slide Deck (PDF)
       </a>
     </div>
   </section>
@@ -431,7 +451,7 @@
             <span style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></span>
             <span style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></span>
             <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></span>
-            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-left: 8px;">FitPro Studio Architecture</span>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-left: 8px;">FitPro System Telemetry &amp; Live Studio</span>
           </div>
           <span class="badge CARDIO"><i class="fa-solid fa-heart-pulse"></i> Live Metrics</span>
         </div>
@@ -468,12 +488,12 @@
   <!-- Features Section -->
   <section id="features" class="container" style="padding: 48px 24px;">
     <div style="text-align: center; max-width: 680px; margin: 0 auto 48px;">
-      <span class="eyebrow">Product Architecture</span>
+      <span class="eyebrow">Product Capabilities</span>
       <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.15;">
-        Engineered for clarity and focus.
+        Engineered for clarity and results.
       </h2>
       <p style="color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px;">
-        Every component is designed to support your athletic journey without visual clutter or distraction.
+        Every component is structured to support athletic development without visual noise.
       </p>
     </div>
 
@@ -535,7 +555,7 @@
         <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 20px;">
           Elevate VO2 max and burn calories with progressive interval training, sprints, and metabolic conditioning.
         </p>
-        <span class="badge neutral">MET Intensity: 7.0 – 10.0</span>
+        <span class="badge neutral">MET Factor: 7.0 – 10.0</span>
       </div>
 
       <div class="card hover-lift">
@@ -544,7 +564,7 @@
         <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 20px;">
           Build functional muscle and core stability with structured dumbbell, barbell, and calisthenic progressions.
         </p>
-        <span class="badge neutral">MET Intensity: 5.0 – 6.0</span>
+        <span class="badge neutral">MET Factor: 5.0 – 6.0 (+10% EPOC)</span>
       </div>
 
       <div class="card hover-lift">
@@ -553,59 +573,20 @@
         <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 20px;">
           Enhance flexibility, joint health, and mental equilibrium through guided breathing and restorative flow.
         </p>
-        <span class="badge neutral">MET Intensity: 3.0 – 4.0</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="container" style="padding: 48px 24px;">
-    <div style="text-align: center; max-width: 680px; margin: 0 auto 48px;">
-      <span class="eyebrow">Streamlined Workflow</span>
-      <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.15;">
-        How FitPro works.
-      </h2>
-      <p style="color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px;">
-        Get started in minutes with our three-step fitness journey.
-      </p>
-    </div>
-
-    <div class="grid three">
-      <div class="step-card">
-        <span class="step-num">STEP 01</span>
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">Select Your Program</h3>
-        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5;">
-          Browse the catalogue, filter by discipline or difficulty, and enroll into programs that match your schedule.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">STEP 02</span>
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">Train &amp; Log Sessions</h3>
-        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5;">
-          Complete your workout and log your minutes and current weight. FitPro calculates exact polymorphic caloric burn.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">STEP 03</span>
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">Track &amp; Progress</h3>
-        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5;">
-          Monitor personal records, analyze historical charts, and download CSV reports to verify athletic improvements.
-        </p>
+        <span class="badge neutral">MET Factor: 3.0 – 4.0</span>
       </div>
     </div>
   </section>
 
   <!-- Interactive Three Roles Showcase -->
   <section id="roles" class="container" style="padding: 48px 24px;">
-    <div style="text-align: center; max-width: 720px; margin: 0 auto 32px;">
-      <span class="eyebrow"><i class="fa-solid fa-users"></i> Role Architecture</span>
+    <div style="text-align: center; max-width: 720px; margin: 0 auto 28px;">
+      <span class="eyebrow"><i class="fa-solid fa-users"></i> Role-Based Access Control</span>
       <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em;">
-        Three Independent Roles. One Unified Platform.
+        Three Independent Roles. One Unified Architecture.
       </h2>
       <p style="color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px;">
-        FitPro enforces strict Role-Based Access Control (RBAC) across three distinct user roles.
+        FitPro enforces strict Role-Based Access Control (RBAC) across three distinct user roles in the Java backend.
       </p>
     </div>
 
@@ -627,7 +608,7 @@
         <div>
           <span class="badge neutral" style="margin-bottom: 6px;">Role: MEMBER</span>
           <h3 style="font-size: 1.5rem; font-weight: 700;">Member Personal Fitness Dashboard</h3>
-          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>member@fitpro.com</code> / Pass: <code>member123</code></p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>member@fitpro.com</code> &middot; Password: <code>member123</code></p>
         </div>
         <span class="badge YOGA"><i class="fa-solid fa-check"></i> Active Streak</span>
       </div>
@@ -666,15 +647,20 @@
           </p>
         </div>
       </div>
+
+      <div class="notice-callout">
+        <i class="fa-solid fa-circle-info" style="color: var(--accent-blue);"></i>
+        <span>To test live member session logging, database writes, and CSV export, execute the packaged Java application via Tomcat.</span>
+      </div>
     </div>
 
-    <!-- Role Panel: Trainer (Hidden by default) -->
+    <!-- Role Panel: Trainer -->
     <div id="role-trainer" class="card" style="padding: 36px; display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
           <span class="badge STRENGTH" style="margin-bottom: 6px;">Role: TRAINER</span>
           <h3 style="font-size: 1.5rem; font-weight: 700;">Trainer Studio &amp; Member Coaching</h3>
-          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>trainer@fitpro.com</code> / Pass: <code>trainer123</code></p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>trainer@fitpro.com</code> &middot; Password: <code>trainer123</code></p>
         </div>
         <span class="badge STRENGTH"><i class="fa-solid fa-certificate"></i> Certified Coach</span>
       </div>
@@ -708,15 +694,20 @@
           </p>
         </div>
       </div>
+
+      <div class="notice-callout">
+        <i class="fa-solid fa-circle-info" style="color: var(--accent-blue);"></i>
+        <span>Trainers have exclusive permissions to publish routines and monitor member progress feeds in the Java backend.</span>
+      </div>
     </div>
 
-    <!-- Role Panel: Admin (Hidden by default) -->
+    <!-- Role Panel: Admin -->
     <div id="role-admin" class="card" style="padding: 36px; display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
           <span class="badge ADMIN" style="margin-bottom: 6px;">Role: ADMIN</span>
           <h3 style="font-size: 1.5rem; font-weight: 700;">Platform Administration Center</h3>
-          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>admin@fitpro.com</code> / Pass: <code>admin123</code></p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">Demonstration Account: <code>admin@fitpro.com</code> &middot; Password: <code>admin123</code></p>
         </div>
         <span class="badge ADMIN"><i class="fa-solid fa-shield-halved"></i> Superuser Privileges</span>
       </div>
@@ -753,6 +744,11 @@
             JVM memory monitoring, thread pool telemetry, relational DB status, and PBKDF2 cryptography verification.
           </p>
         </div>
+      </div>
+
+      <div class="notice-callout">
+        <i class="fa-solid fa-circle-info" style="color: var(--accent-blue);"></i>
+        <span>The dedicated Admin Portal (<code>/app/admin</code>) strictly denies access to non-administrative accounts via Java EE filter barriers.</span>
       </div>
     </div>
   </section>
@@ -803,16 +799,68 @@
     </div>
   </section>
 
+  <!-- Architecture & Deployment Section -->
+  <section id="deployment" class="container" style="padding: 48px 24px;">
+    <div style="text-align: center; max-width: 720px; margin: 0 auto 36px;">
+      <span class="eyebrow"><i class="fa-solid fa-server"></i> Deployment Separation</span>
+      <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em;">
+        Dual-Deployment Architecture
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px;">
+        FitPro separates static product presentation from live enterprise Java execution.
+      </p>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <div class="feature-icon-bubble" style="margin-bottom: 0;"><i class="fa-solid fa-globe"></i></div>
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 700;">Static Showcase (Vercel)</h3>
+            <span class="badge neutral">Edge CDN Deployment</span>
+          </div>
+        </div>
+        <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+          Deployed on Vercel as a zero-dependency static site. Hosts this interactive architecture overview,
+          feature showcases, client-side BMI calculator, and slide deck documentation.
+        </p>
+        <div style="background: var(--bg-canvas); padding: 12px 16px; border-radius: 12px; font-size: 0.82rem; font-family: monospace;">
+          vercel.json: cleanUrls: true, framework: null
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <div class="feature-icon-bubble" style="margin-bottom: 0;"><i class="fa-solid fa-leaf"></i></div>
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 700;">Full Java Web App (Tomcat)</h3>
+            <span class="badge STRENGTH">Enterprise WAR Container</span>
+          </div>
+        </div>
+        <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+          Runs the complete Java backend: 7 Servlets, JSP rendering, JDBC persistence (H2/MySQL),
+          multithreaded notifications, and salted PBKDF2 authentication.
+        </p>
+        <div style="background: var(--bg-canvas); padding: 12px 16px; border-radius: 12px; font-size: 0.82rem; font-family: monospace;">
+          mvn package cargo:run &rarr; http://localhost:8080/fitpro/
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Final Call to Action -->
-  <section class="container" style="text-align: center; padding: 72px 20px; background: #ffffff; border-radius: 28px; border: 1px solid var(--hairline); margin: 32px auto 48px;">
+  <section class="container" style="text-align: center; padding: 72px 20px; background: #ffffff; border-radius: 28px; border: 1px solid var(--hairline); margin: 32px auto 64px;">
     <span class="eyebrow">Enterprise Java &middot; Minimal Apple Design</span>
-    <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 12px;">Experience FitPro Today</h2>
-    <p style="color: var(--text-secondary); max-width: 580px; margin: 0 auto 28px; font-size: 1.05rem;">
-      Full-stack Java web application packaged with Maven and runnable with single-click commands.
+    <h2 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 12px;">Demonstrate FitPro</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 28px; font-size: 1.05rem;">
+      Execute the automated test suite or start the Tomcat servlet container with a single command.
     </p>
     <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-      <a href="#roles" class="btn primary-btn" style="padding: 12px 28px; font-size: 1rem;">
-        <i class="fa-solid fa-terminal"></i> Ready for Viva Demonstration
+      <a href="docs/FitPro_Presentation_v3.pdf" target="_blank" class="btn blue-btn" style="padding: 12px 28px; font-size: 1rem;">
+        <i class="fa-regular fa-file-pdf"></i> Presentation Slides (PDF)
+      </a>
+      <a href="https://github.com/adiithakurr110/FitPro-Fitness-Platform" target="_blank" class="btn outline-btn" style="padding: 12px 28px; font-size: 1rem;">
+        <i class="fa-brands fa-github"></i> GitHub Repository
       </a>
     </div>
   </section>
@@ -823,12 +871,12 @@
   <div class="footer-inner">
     <div class="footer-nav-grid">
       <div class="footer-col">
-        <h4>Architecture</h4>
+        <h4>Java Architecture</h4>
         <ul>
-          <li><a href="#">Java EE Servlets 4.0</a></li>
-          <li><a href="#">JavaServer Pages (JSP)</a></li>
-          <li><a href="#">JDBC &amp; DAO Layer</a></li>
-          <li><a href="#">H2 &amp; MySQL Dual Mode</a></li>
+          <li><a href="#deployment">Java EE Servlets 4.0</a></li>
+          <li><a href="#deployment">JavaServer Pages (JSP)</a></li>
+          <li><a href="#deployment">JDBC &amp; DAO Layer</a></li>
+          <li><a href="#deployment">H2 &amp; MySQL Dual Mode</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -845,6 +893,7 @@
           <li><a href="#features">Polymorphic MET Calculation</a></li>
           <li><a href="#features">CSV Export Reporting</a></li>
           <li><a href="#calculator">BMI &amp; Calorie Target Tool</a></li>
+          <li><a href="docs/FitPro_Presentation_v3.pdf" target="_blank">Presentation Deck (PDF)</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -859,8 +908,8 @@
       <div>FitPro &copy; 2026. Built with Java, Servlets, JSP &amp; JDBC.</div>
       <div style="display: flex; gap: 20px;">
         <a href="#features">Features</a>
-        <a href="#how-it-works">Architecture</a>
-        <a href="#roles">Portals</a>
+        <a href="#deployment">Architecture</a>
+        <a href="https://github.com/adiithakurr110/FitPro-Fitness-Platform" target="_blank">GitHub</a>
       </div>
     </div>
   </div>

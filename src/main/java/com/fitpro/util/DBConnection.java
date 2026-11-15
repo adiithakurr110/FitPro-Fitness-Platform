@@ -91,12 +91,6 @@ public final class DBConnection {
             if (!tablesExist) {
                 System.out.println("[FitPro] Table 'users' not found. Initializing database schema...");
                 InputStream in = DBConnection.class.getClassLoader().getResourceAsStream("schema.sql");
-                if (in == null) {
-                    java.io.File file = new java.io.File("database/schema.sql");
-                    if (file.exists()) {
-                        in = new java.io.FileInputStream(file);
-                    }
-                }
                 if (in != null) {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                         StringBuilder sb = new StringBuilder();
