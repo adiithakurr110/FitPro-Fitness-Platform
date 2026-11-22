@@ -6,19 +6,20 @@ import com.fitpro.dao.UserDAO;
 import com.fitpro.dao.WorkoutDAO;
 import com.fitpro.exception.AppException;
 import com.fitpro.model.User;
+import com.fitpro.util.DBConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
  * Dedicated Administrator Management Portal.
  * Restricts access strictly to accounts with the ADMIN role.
- * Provides user & role management, workout content moderation,
- * platform telemetry, and system diagnostics.
+ * Implements Post/Redirect/Get (PRG) pattern for state changes to prevent form re-submissions.
  */
 @WebServlet("/app/admin")
 public class AdminServlet extends HttpServlet {
@@ -36,12 +37,25 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
+        // Consume session flash messages if present
+        HttpSession session = req.getSession();
+        String flashSuccess = (String) session.getAttribute("success");
+        if (flashSuccess != null) {
+            req.setAttribute("success", flashSuccess);
+            session.removeAttribute("success");
+        }
+        String flashError = (String) session.getAttribute("error");
+        if (flashError != null) {
+            req.setAttribute("error", flashError);
+            session.removeAttribute("error");
+        }
+
         loadAdminData(req);
         req.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         User user = (User) req.getSession().getAttribute("user");
         if (user == null || !user.isAdmin()) {
@@ -49,38 +63,44 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
+        HttpSession session = req.getSession();
         String action = req.getParameter("action");
         try {
             if ("updateRole".equals(action)) {
                 int targetUserId = Integer.parseInt(req.getParameter("userId"));
                 String newRole = req.getParameter("newRole");
-                if ("MEMBER".equalsIgnoreCase(newRole) || "TRAINER".equalsIgnoreCase(newRole) || "ADMIN".equalsIgnoreCase(newRole)) {
+
+                // Prevent admin from demoting their own superuser account
+                if (targetUserId == user.getId() && !"ADMIN".equalsIgnoreCase(newRole)) {
+                    session.setAttribute("error", "You cannot demote your own administrator account.");
+                } else if ("MEMBER".equalsIgnoreCase(newRole) || "TRAINER".equalsIgnoreCase(newRole) || "ADMIN".equalsIgnoreCase(newRole)) {
                     userDAO.updateRole(targetUserId, newRole);
-                    req.setAttribute("success", "User role successfully updated to " + newRole.toUpperCase() + ".");
+                    session.setAttribute("success", "User role successfully updated to " + newRole.toUpperCase() + ".");
                 } else {
-                    req.setAttribute("error", "Invalid role selected.");
+                    session.setAttribute("error", "Invalid role selected.");
                 }
             } else if ("deleteUser".equals(action)) {
                 int targetUserId = Integer.parseInt(req.getParameter("userId"));
+                // Prevent admin from deleting their own superuser account
                 if (targetUserId == user.getId()) {
-                    req.setAttribute("error", "You cannot delete your own administrator account.");
+                    session.setAttribute("error", "You cannot delete your own administrator account.");
                 } else {
                     userDAO.delete(targetUserId);
-                    req.setAttribute("success", "User account and associated records deleted.");
+                    session.setAttribute("success", "User account and associated records deleted.");
                 }
             } else if ("deleteWorkout".equals(action)) {
                 int workoutId = Integer.parseInt(req.getParameter("workoutId"));
                 workoutDAO.delete(workoutId);
-                req.setAttribute("success", "Workout program removed from catalog.");
+                session.setAttribute("success", "Workout program removed from the catalogue.");
             }
         } catch (NumberFormatException e) {
-            req.setAttribute("error", "Invalid identifier provided.");
+            session.setAttribute("error", "Invalid identifier provided.");
         } catch (AppException e) {
-            req.setAttribute("error", e.getMessage());
+            session.setAttribute("error", e.getMessage());
         }
 
-        loadAdminData(req);
-        req.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(req, resp);
+        // Post/Redirect/Get pattern prevents duplicate submissions on refresh
+        resp.sendRedirect(req.getContextPath() + "/app/admin");
     }
 
     private void loadAdminData(HttpServletRequest req) {
@@ -99,6 +119,7 @@ public class AdminServlet extends HttpServlet {
             req.setAttribute("jvmTotalMemory", totalMb);
             req.setAttribute("jvmAvailableProcessors", rt.availableProcessors());
             req.setAttribute("javaVersion", System.getProperty("java.version"));
+            req.setAttribute("dbMode", DBConnection.getActiveMode().toUpperCase());
         } catch (AppException e) {
             req.setAttribute("error", e.getMessage());
         }

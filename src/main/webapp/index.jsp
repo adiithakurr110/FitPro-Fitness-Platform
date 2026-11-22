@@ -43,7 +43,7 @@
         <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f; display: inline-block;"></span>
         <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-left: 8px;">FitPro Studio Overview</span>
       </div>
-      <span class="badge CARDIO"><i class="fa-solid fa-heart-pulse"></i> Live Metrics</span>
+      <span class="badge CARDIO"><i class="fa-solid fa-heart-pulse"></i> Sample Metrics Preview</span>
     </div>
 
     <div class="grid three">

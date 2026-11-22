@@ -70,4 +70,27 @@ public class AuthServiceTest {
         Assertions.assertThrows(AppException.class, () ->
                 authService.login("nonexistent@nowhere.org", "anyPass"));
     }
+
+    @Test
+    @DisplayName("Registration prevents privilege escalation: ADMIN input forces MEMBER role")
+    public void testRegistrationBlocksAdminPrivilegeEscalation() throws Exception {
+        String testEmail = "fake_admin_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User user = authService.register("Hacker", testEmail, "secret123", "ADMIN");
+
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals("MEMBER", user.getRole(), "User submitting role=ADMIN must be forced to MEMBER");
+        Assertions.assertFalse(user.isAdmin());
+        Assertions.assertTrue(user.isMember());
+    }
+
+    @Test
+    @DisplayName("Registration permits legitimate TRAINER role selection")
+    public void testRegistrationAllowsTrainer() throws Exception {
+        String testEmail = "coach_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User user = authService.register("Coach Sam", testEmail, "secret123", "TRAINER");
+
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals("TRAINER", user.getRole());
+        Assertions.assertTrue(user.isTrainer());
+    }
 }

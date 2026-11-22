@@ -105,4 +105,37 @@ public class DAOTest {
         Assertions.assertFalse(userLogs.isEmpty());
         Assertions.assertEquals(25, userLogs.get(0).getMinutes());
     }
+
+    @Test
+    @DisplayName("WorkoutDAO search filters by keyword, type, and level")
+    public void testWorkoutDAOSearch() throws AppException {
+        List<Workout> results = workoutDAO.search("Jog", "CARDIO", "BEGINNER");
+        Assertions.assertNotNull(results);
+        for (Workout w : results) {
+            Assertions.assertEquals("CARDIO", w.getType());
+            Assertions.assertEquals("BEGINNER", w.getLevel());
+        }
+    }
+
+    @Test
+    @DisplayName("UserDAO updates role and deletes user cleanly")
+    public void testUserRoleUpdateAndDelete() throws AppException {
+        String email = "role_test_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User u = User.of("MEMBER");
+        u.setFullName("Role Test User");
+        u.setEmail(email);
+        u.setPasswordHash("hash123:salt");
+        int userId = userDAO.create(u);
+
+        boolean updated = userDAO.updateRole(userId, "TRAINER");
+        Assertions.assertTrue(updated);
+
+        Optional<User> updatedUser = userDAO.findById(userId);
+        Assertions.assertTrue(updatedUser.isPresent());
+        Assertions.assertEquals("TRAINER", updatedUser.get().getRole());
+
+        boolean deleted = userDAO.delete(userId);
+        Assertions.assertTrue(deleted);
+        Assertions.assertFalse(userDAO.findById(userId).isPresent());
+    }
 }

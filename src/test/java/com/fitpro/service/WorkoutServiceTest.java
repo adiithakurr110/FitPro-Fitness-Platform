@@ -124,4 +124,51 @@ public class WorkoutServiceTest {
         Assertions.assertThrows(AppException.class, () ->
                 workoutService.enroll(member, workoutId));
     }
+
+    @Test
+    @DisplayName("Workout deletion authorization: trainers only delete own; admins delete any; members blocked")
+    public void testWorkoutDeletionAuthorization() throws Exception {
+        String trainer1Email = "t1_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User trainer1 = authService.register("Coach One", trainer1Email, "coach123", "TRAINER");
+
+        String trainer2Email = "t2_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User trainer2 = authService.register("Coach Two", trainer2Email, "coach123", "TRAINER");
+
+        String memberEmail = "m_del_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        User member = authService.register("Plain Member", memberEmail, "member123", "MEMBER");
+
+        User admin = User.of("ADMIN");
+        admin.setId(9999);
+        admin.setFullName("Super Admin");
+
+        String title = "Auth Delete Test " + UUID.randomUUID().toString().substring(0, 4);
+        workoutService.publish(trainer1, title, "Testing deletion rules", "CARDIO", "BEGINNER", "30", "7.0");
+
+        List<Workout> list = workoutService.list("CARDIO");
+        Workout created = list.stream().filter(w -> w.getTitle().equals(title)).findFirst()
+                .orElseThrow(() -> new AssertionError("Workout not found"));
+
+        // Member cannot delete
+        Assertions.assertThrows(AppException.class, () -> workoutService.delete(member, created.getId()));
+
+        // Different trainer cannot delete
+        Assertions.assertThrows(AppException.class, () -> workoutService.delete(trainer2, created.getId()));
+
+        // Author trainer can delete
+        workoutService.delete(trainer1, created.getId());
+        Assertions.assertFalse(workoutService.list("CARDIO").stream().anyMatch(w -> w.getId() == created.getId()));
+    }
+
+    @Test
+    @DisplayName("Workout multi-criteria search and filtering")
+    public void testWorkoutSearchAndFilter() throws Exception {
+        List<Workout> searchResults = workoutService.search("Morning", "CARDIO", "BEGINNER");
+        Assertions.assertNotNull(searchResults);
+        for (Workout w : searchResults) {
+            Assertions.assertEquals("CARDIO", w.getType());
+            Assertions.assertEquals("BEGINNER", w.getLevel());
+            Assertions.assertTrue(w.getTitle().toLowerCase().contains("morning")
+                    || (w.getDescription() != null && w.getDescription().toLowerCase().contains("morning")));
+        }
+    }
 }

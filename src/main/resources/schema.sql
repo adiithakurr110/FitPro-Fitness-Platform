@@ -1,16 +1,9 @@
--- =====================================================
--- FitPro database schema + sample data
--- =====================================================
-CREATE DATABASE IF NOT EXISTS fitpro CHARACTER SET utf8mb4;
-USE fitpro;
+-- ===================================================================
+-- FitPro Relational Database Schema
+-- Idempotent, non-destructive table definitions for H2 and MySQL.
+-- ===================================================================
 
-DROP TABLE IF EXISTS progress_logs;
-DROP TABLE IF EXISTS enrollments;
-DROP TABLE IF EXISTS workouts;
-DROP TABLE IF EXISTS users;
-
--- Members train, trainers publish workout programs
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     full_name     VARCHAR(100) NOT NULL,
     email         VARCHAR(120) NOT NULL UNIQUE,
@@ -19,7 +12,7 @@ CREATE TABLE users (
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE workouts (
+CREATE TABLE IF NOT EXISTS workouts (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     title        VARCHAR(120) NOT NULL,
     description  VARCHAR(500),
@@ -31,7 +24,7 @@ CREATE TABLE workouts (
     FOREIGN KEY (trainer_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     user_id     INT NOT NULL,
     workout_id  INT NOT NULL,
@@ -41,7 +34,7 @@ CREATE TABLE enrollments (
     FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
 );
 
-CREATE TABLE progress_logs (
+CREATE TABLE IF NOT EXISTS progress_logs (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     user_id     INT NOT NULL,
     workout_id  INT NOT NULL,
@@ -53,11 +46,7 @@ CREATE TABLE progress_logs (
     FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
 );
 
--- Sample programs so the catalogue is not empty on first run
-INSERT INTO workouts (title, description, type, level, duration_min, met_value) VALUES
-('Morning Jog Starter',   'Easy 30 minute jog to build stamina.',               'CARDIO',   'BEGINNER',     30, 7.0),
-('HIIT Fat Burner',       'High intensity intervals: burpees, jumps, sprints.', 'CARDIO',   'ADVANCED',     25, 10.0),
-('Full Body Strength',    'Squats, push-ups, rows and planks with dumbbells.',  'STRENGTH', 'INTERMEDIATE', 45, 5.0),
-('Upper Body Power',      'Chest, shoulders and arms hypertrophy session.',     'STRENGTH', 'ADVANCED',     50, 6.0),
-('Sunrise Yoga Flow',     'Gentle vinyasa flow for flexibility and focus.',     'YOGA',     'BEGINNER',     40, 3.0),
-('Power Yoga',            'Strength-building yoga with long holds.',            'YOGA',     'INTERMEDIATE', 45, 4.0);
+-- Helpful secondary indexes for query performance
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_workouts_type ON workouts(type);
+CREATE INDEX IF NOT EXISTS idx_progress_user ON progress_logs(user_id);

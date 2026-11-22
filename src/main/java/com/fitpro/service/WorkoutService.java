@@ -8,6 +8,7 @@ import com.fitpro.model.Workout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /** Business rules for the workout catalogue and enrollments. */
@@ -25,6 +26,11 @@ public class WorkoutService {
                 : workoutDAO.findAll();
     }
 
+    /** Multi-criteria search and filter across keywords, category, and level. */
+    public List<Workout> search(String keyword, String type, String level) throws AppException {
+        return workoutDAO.search(keyword, type, level);
+    }
+
     public Set<Integer> enrolledIds(int userId) throws AppException {
         return enrollmentDAO.findEnrolledIds(userId);
     }
@@ -35,7 +41,7 @@ public class WorkoutService {
 
     public void enroll(User user, int workoutId) throws AppException {
         if (user.isTrainer() || user.isAdmin()) throw new AppException("Trainers and administrators cannot enroll in programs.");
-        if (!workoutDAO.findById(workoutId).isPresent()) throw new AppException("Workout not found.");
+        if (!workoutDAO.findById(workoutId).isPresent()) throw new AppException("Workout program not found.");
         if (!enrollmentDAO.enroll(user.getId(), workoutId)) throw new AppException("You are already enrolled in this program.");
         NotificationService.getInstance().sendAsync(user.getEmail(), "You joined a new program. Let's go!");
     }
@@ -45,8 +51,8 @@ public class WorkoutService {
                         String level, String durationText, String metText) throws AppException {
         if (!trainer.isTrainer() && !trainer.isAdmin()) throw new AppException("Only trainers and administrators can publish programs.");
         if (title == null || title.trim().length() < 3) throw new AppException("Title must be at least 3 characters.");
-        if (type == null || !TYPES.contains(type.toUpperCase())) throw new AppException("Choose a valid type.");
-        if (level == null || !LEVELS.contains(level.toUpperCase())) throw new AppException("Choose a valid level.");
+        if (type == null || !TYPES.contains(type.toUpperCase())) throw new AppException("Choose a valid type (Cardio, Strength, or Yoga).");
+        if (level == null || !LEVELS.contains(level.toUpperCase())) throw new AppException("Choose a valid level (Beginner, Intermediate, or Advanced).");
 
         int duration;
         double met;
@@ -69,9 +75,24 @@ public class WorkoutService {
         workoutDAO.create(w);
     }
 
-    /** Trainer or Admin: deletes an existing workout program. */
+    /**
+     * Deletes an existing workout program.
+     * Enforces strict authorization: Trainers can only delete programs they authored;
+     * Administrators have global authority to delete any program.
+     */
     public void delete(User user, int workoutId) throws AppException {
-        if (!user.isTrainer() && !user.isAdmin()) throw new AppException("Only trainers and administrators can delete programs.");
+        if (!user.isTrainer() && !user.isAdmin()) {
+            throw new AppException("Only trainers and administrators can delete programs.");
+        }
+        Optional<Workout> found = workoutDAO.findById(workoutId);
+        if (!found.isPresent()) {
+            throw new AppException("Workout program not found.");
+        }
+        if (user.isTrainer() && !user.isAdmin()) {
+            if (found.get().getTrainerId() > 0 && found.get().getTrainerId() != user.getId()) {
+                throw new AppException("You can only delete workout programs that you created.");
+            }
+        }
         workoutDAO.delete(workoutId);
     }
 }

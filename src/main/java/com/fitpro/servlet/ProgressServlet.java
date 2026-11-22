@@ -11,11 +11,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-/** Members log finished sessions, see their history, and export progress reports. */
+/**
+ * Members log training sessions, inspect historical data, and export CSV progress reports.
+ * Employs Post/Redirect/Get (PRG) pattern to prevent duplicate session records on refresh.
+ */
 @WebServlet("/app/progress")
 public class ProgressServlet extends HttpServlet {
     private final ProgressService progressService = new ProgressService();
@@ -24,12 +28,30 @@ public class ProgressServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
         String action = req.getParameter("action");
 
-        // Innovation feature: Export session logs to CSV report
-        if ("export".equalsIgnoreCase(action) && user != null && !user.isTrainer() && !user.isAdmin()) {
+        // Innovation feature: Export session logs to CSV spreadsheet file
+        if ("export".equalsIgnoreCase(action) && !user.isTrainer() && !user.isAdmin()) {
             exportCsv(resp, user.getId());
             return;
+        }
+
+        // Consume session flash messages if present
+        HttpSession session = req.getSession();
+        String flashSuccess = (String) session.getAttribute("success");
+        if (flashSuccess != null) {
+            req.setAttribute("success", flashSuccess);
+            session.removeAttribute("success");
+        }
+        String flashError = (String) session.getAttribute("error");
+        if (flashError != null) {
+            req.setAttribute("error", flashError);
+            session.removeAttribute("error");
         }
 
         render(req, resp, user);
@@ -58,29 +80,39 @@ public class ProgressServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        req.setCharacterEncoding("UTF-8");
         User user = (User) req.getSession().getAttribute("user");
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
         if (user.isTrainer() || user.isAdmin()) {
             resp.sendRedirect(req.getContextPath() + "/app/dashboard");
             return;
         }
+
+        HttpSession session = req.getSession();
         try {
             ProgressLog log = progressService.logSession(user.getId(),
                     Integer.parseInt(req.getParameter("workoutId")),
                     req.getParameter("minutes"), req.getParameter("weight"));
-            req.setAttribute("success", "Session saved: about " + log.getCalories() + " kcal burned.");
+            session.setAttribute("success", "Session saved! " + log.getCalories() + " kcal burned successfully.");
         } catch (NumberFormatException e) {
-            req.setAttribute("error", "Please choose a workout.");
+            session.setAttribute("error", "Please select a workout program and enter valid numbers.");
         } catch (AppException e) {
-            req.setAttribute("error", e.getMessage());
+            session.setAttribute("error", e.getMessage());
         }
-        render(req, resp, user);
+
+        // Post/Redirect/Get pattern prevents duplicate session entries on refresh
+        resp.sendRedirect(req.getContextPath() + "/app/progress");
     }
 
     private void render(HttpServletRequest req, HttpServletResponse resp, User user)
             throws ServletException, IOException {
         try {
-            if (user != null && !user.isTrainer() && !user.isAdmin()) {
+            if (!user.isTrainer() && !user.isAdmin()) {
                 req.setAttribute("myWorkouts", workoutService.enrolledWorkouts(user.getId()));
                 req.setAttribute("logs", progressService.history(user.getId()));
             }

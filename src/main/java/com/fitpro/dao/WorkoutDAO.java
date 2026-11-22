@@ -62,6 +62,46 @@ public class WorkoutDAO implements BaseDAO<Workout, Integer> {
         return query(SELECT + "WHERE w.type = ? ORDER BY w.id", type);
     }
 
+    /**
+     * Advanced Search & Filter (Innovation feature):
+     * Dynamically filters workouts by title/description keyword, discipline type, and difficulty tier
+     * using safe parameterized SQL prepared statements.
+     */
+    public List<Workout> search(String keyword, String type, String level) throws AppException {
+        StringBuilder sql = new StringBuilder(SELECT).append("WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND (LOWER(w.title) LIKE ? OR LOWER(w.description) LIKE ?) ");
+            String kw = "%" + keyword.trim().toLowerCase() + "%";
+            params.add(kw);
+            params.add(kw);
+        }
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append("AND w.type = ? ");
+            params.add(type.trim().toUpperCase());
+        }
+        if (level != null && !level.trim().isEmpty()) {
+            sql.append("AND w.level = ? ");
+            params.add(level.trim().toUpperCase());
+        }
+        sql.append("ORDER BY w.id");
+
+        List<Workout> list = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(map(rs));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new AppException("Could not execute workout search: " + e.getMessage(), e);
+        }
+    }
+
     /** Deletes a workout program by id (Admin/Trainer action). */
     public boolean delete(int workoutId) throws AppException {
         String sql = "DELETE FROM workouts WHERE id = ?";

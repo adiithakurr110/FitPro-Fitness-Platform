@@ -97,4 +97,16 @@ public class WorkoutModelTest {
         Assertions.assertEquals(5, w.getTrainerId());
         Assertions.assertEquals("Coach Mike", w.getTrainerName());
     }
+
+    @Test
+    @DisplayName("Calorie calculation handles non-positive weight and minutes safely")
+    public void testNonPositiveInputsSafeHandling() {
+        Workout cardio = new CardioWorkout();
+        cardio.setMetValue(7.0);
+
+        Assertions.assertEquals(0.0, cardio.caloriesBurned(0, 30));
+        Assertions.assertEquals(0.0, cardio.caloriesBurned(-70, 30));
+        Assertions.assertEquals(0.0, cardio.caloriesBurned(70, 0));
+        Assertions.assertEquals(0.0, cardio.caloriesBurned(70, -30));
+    }
 }

@@ -10,14 +10,16 @@ import java.sql.*;
 import java.util.Properties;
 
 /**
- * Central place for JDBC connectivity.
- * Reads db.properties from classpath; environment variables
- * DB_URL / DB_USER / DB_PASSWORD override the file.
- * Auto-initializes schema and falls back seamlessly to embedded H2 if MySQL is unavailable.
+ * Central JDBC Connectivity Manager.
+ * Demonstrates:
+ * - Singleton / Utility Pattern with thread-safe connection pooling
+ * - Dual-Engine Support: Embedded H2 (zero setup) and MySQL
+ * - Explicit database mode configuration via db.properties or environment variables
+ * - Idempotent, non-destructive schema initialization and optional demo data seeding
  */
 public final class DBConnection {
     private static final Properties PROPS = new Properties();
-    private static boolean useH2Fallback = false;
+    private static String activeMode = "h2";
     private static boolean initialized = false;
 
     static {
@@ -38,43 +40,59 @@ public final class DBConnection {
 
     private DBConnection() { }
 
-    /** Opens a new connection. Callers must close it (use try-with-resources). */
+    /**
+     * Opens a new database connection. Callers must close it (use try-with-resources).
+     */
     public static synchronized Connection getConnection() throws AppException {
-        String url  = env("DB_URL", PROPS.getProperty("db.url", "jdbc:mysql://localhost:3306/fitpro?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"));
-        String user = env("DB_USER", PROPS.getProperty("db.user", "root"));
-        String pass = env("DB_PASSWORD", PROPS.getProperty("db.password", "root"));
+        String configuredType = env("DB_TYPE", PROPS.getProperty("db.type", "h2")).trim().toLowerCase();
 
-        if (useH2Fallback) {
-            return getH2Connection();
+        if ("mysql".equals(configuredType) && !"h2".equals(activeMode)) {
+            String url  = env("DB_URL", PROPS.getProperty("db.mysql.url", "jdbc:mysql://localhost:3306/fitpro?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"));
+            String user = env("DB_USER", PROPS.getProperty("db.mysql.user", "root"));
+            String pass = env("DB_PASSWORD", PROPS.getProperty("db.mysql.password", ""));
+
+            try {
+                Connection con = DriverManager.getConnection(url, user, pass);
+                if (!initialized) {
+                    activeMode = "mysql";
+                    System.out.println("[FitPro Database] Active Mode: MySQL Server (" + url + ")");
+                    initTablesIfNeeded(con);
+                    seedInitialDataIfNeeded(con);
+                    initialized = true;
+                }
+                return con;
+            } catch (SQLException e) {
+                System.err.println("[FitPro Database Alert] MySQL connection failed (" + e.getMessage() + "). Falling back to embedded H2 database mode.");
+                activeMode = "h2";
+            }
         }
 
-        try {
-            Connection con = DriverManager.getConnection(url, user, pass);
-            if (!initialized) {
-                initTablesIfNeeded(con);
-                seedInitialDataIfNeeded(con);
-                initialized = true;
-            }
-            return con;
-        } catch (SQLException e) {
-            System.out.println("[FitPro] MySQL note: " + e.getMessage() + ". Using embedded H2 database mode.");
-            useH2Fallback = true;
-            Connection h2Con = getH2Connection();
-            if (!initialized) {
-                initTablesIfNeeded(h2Con);
-                seedInitialDataIfNeeded(h2Con);
-                initialized = true;
-            }
-            return h2Con;
+        // H2 embedded mode (default or fallback)
+        Connection h2Con = getH2Connection();
+        if (!initialized) {
+            activeMode = "h2";
+            System.out.println("[FitPro Database] Active Mode: Embedded H2 Database (Persistent at ./data/fitpro_db)");
+            initTablesIfNeeded(h2Con);
+            seedInitialDataIfNeeded(h2Con);
+            initialized = true;
         }
+        return h2Con;
+    }
+
+    /** Returns the currently active database mode name ("h2" or "mysql"). */
+    public static synchronized String getActiveMode() {
+        return activeMode;
     }
 
     private static Connection getH2Connection() throws AppException {
         try {
-            String h2Url = "jdbc:h2:./data/fitpro_db;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_SERVER=TRUE";
-            return DriverManager.getConnection(h2Url, "sa", "");
+            String defaultH2Url = "jdbc:h2:./data/fitpro_db;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_SERVER=TRUE";
+            String h2Url  = env("H2_URL", PROPS.getProperty("db.h2.url", defaultH2Url));
+            String h2User = env("H2_USER", PROPS.getProperty("db.h2.user", "sa"));
+            String h2Pass = env("H2_PASSWORD", PROPS.getProperty("db.h2.password", ""));
+            return DriverManager.getConnection(h2Url, h2User, h2Pass);
         } catch (SQLException e) {
-            throw new AppException("Cannot connect to embedded H2 database.", e);
+            throw new AppException("Cannot connect to embedded H2 database: " + e.getMessage(), e);
         }
     }
 
@@ -89,7 +107,7 @@ public final class DBConnection {
             }
 
             if (!tablesExist) {
-                System.out.println("[FitPro] Table 'users' not found. Initializing database schema...");
+                System.out.println("[FitPro] Table 'users' not found. Executing idempotent schema.sql...");
                 InputStream in = DBConnection.class.getClassLoader().getResourceAsStream("schema.sql");
                 if (in != null) {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
@@ -110,19 +128,19 @@ public final class DBConnection {
                                 if (!sql.isEmpty()) {
                                     try {
                                         st.execute(sql);
-                                        System.out.println("[FitPro Init Executed] " + (sql.length() > 60 ? sql.substring(0, 60) + "..." : sql));
                                     } catch (SQLException ex) {
-                                        System.err.println("[FitPro Init SQL Warning] " + ex.getMessage() + " | SQL: " + sql);
+                                        System.err.println("[FitPro Schema SQL Warning] " + ex.getMessage() + " | SQL: " + sql);
                                     }
                                 }
                             }
                         }
                     }
+                    System.out.println("[FitPro] Database schema initialized successfully.");
                 } else {
-                    System.err.println("[FitPro Init Error] schema.sql resource not found!");
+                    System.err.println("[FitPro Init Error] schema.sql resource not found on classpath!");
                 }
             } else {
-                System.out.println("[FitPro] Database tables already exist.");
+                System.out.println("[FitPro] Database tables already exist. Skipping schema creation.");
             }
         } catch (Exception e) {
             System.err.println("[FitPro] Database auto-init error: " + e.getMessage());
@@ -131,12 +149,44 @@ public final class DBConnection {
 
     private static void seedInitialDataIfNeeded(Connection con) {
         try (Statement st = con.createStatement()) {
+            // 1. Seed workouts catalogue if empty
+            int workoutCount = 0;
+            try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM workouts")) {
+                if (rs.next()) workoutCount = rs.getInt(1);
+            }
+
+            if (workoutCount == 0) {
+                System.out.println("[FitPro] Seeding initial workout catalogue...");
+                String insertWorkout = "INSERT INTO workouts (title, description, type, level, duration_min, met_value) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = con.prepareStatement(insertWorkout)) {
+                    Object[][] initialWorkouts = {
+                        {"Morning Jog Starter", "Easy 30 minute jog to build stamina and aerobic base.", "CARDIO", "BEGINNER", 30, 7.0},
+                        {"HIIT Fat Burner", "High-intensity intervals: burpees, jumps, and sprints.", "CARDIO", "ADVANCED", 25, 10.0},
+                        {"Full Body Strength", "Squats, push-ups, dumbbell rows, and core planks.", "STRENGTH", "INTERMEDIATE", 45, 5.0},
+                        {"Upper Body Power", "Chest, shoulder, and arm hypertrophy training.", "STRENGTH", "ADVANCED", 50, 6.0},
+                        {"Sunrise Yoga Flow", "Gentle vinyasa sequence for flexibility and mental focus.", "YOGA", "BEGINNER", 40, 3.0},
+                        {"Power Yoga Sculpt", "Strength-building dynamic yoga with sustained holds.", "YOGA", "INTERMEDIATE", 45, 4.0}
+                    };
+                    for (Object[] row : initialWorkouts) {
+                        ps.setString(1, (String) row[0]);
+                        ps.setString(2, (String) row[1]);
+                        ps.setString(3, (String) row[2]);
+                        ps.setString(4, (String) row[3]);
+                        ps.setInt(5, (Integer) row[4]);
+                        ps.setDouble(6, (Double) row[5]);
+                        ps.executeUpdate();
+                    }
+                }
+            }
+
+            // 2. Seed demonstration accounts if users table is empty
             int userCount = 0;
             try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM users")) {
                 if (rs.next()) userCount = rs.getInt(1);
             }
+
             if (userCount == 0) {
-                System.out.println("[FitPro] Seeding demo accounts (Admin, Trainer, Member) and sample records...");
+                System.out.println("[FitPro] Seeding demo accounts (Admin, Trainer, Member)...");
                 String adminHash = PasswordUtil.hash("admin123");
                 String trainerHash = PasswordUtil.hash("trainer123");
                 String memberHash = PasswordUtil.hash("member123");
@@ -202,7 +252,7 @@ public final class DBConnection {
                         ps.executeUpdate();
                     }
                 }
-                System.out.println("[FitPro] Demo data initialized successfully.");
+                System.out.println("[FitPro] Demonstration data initialized successfully.");
             }
         } catch (Exception e) {
             System.err.println("[FitPro] Seeding note: " + e.getMessage());
@@ -211,6 +261,6 @@ public final class DBConnection {
 
     private static String env(String key, String fallback) {
         String value = System.getenv(key);
-        return (value == null || value.isEmpty()) ? fallback : value;
+        return (value == null || value.trim().isEmpty()) ? fallback : value.trim();
     }
 }

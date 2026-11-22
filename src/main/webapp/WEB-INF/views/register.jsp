@@ -37,9 +37,8 @@
       <div class="form-group">
         <label for="regRole">Account Role</label>
         <select id="regRole" name="role" required>
-          <option value="MEMBER">Member (I want to train &amp; track progress)</option>
-          <option value="TRAINER">Trainer (I coach &amp; publish programs)</option>
-          <option value="ADMIN">Administrator (Platform &amp; system management)</option>
+          <option value="MEMBER">Member (Train, track progress &amp; log sessions)</option>
+          <option value="TRAINER">Trainer (Coach members &amp; publish programs)</option>
         </select>
       </div>
 

@@ -1,8 +1,8 @@
 package com.fitpro.model;
 
 /**
- * Abstract workout program. Concrete types (cardio, strength, yoga) supply their own
- * calorie formula, so callers simply use {@code workout.caloriesBurned(...)} -
+ * Abstract workout program. Concrete types (Cardio, Strength, Yoga) supply their own
+ * energy expenditure formula, so callers use {@code workout.caloriesBurned(...)} -
  * runtime POLYMORPHISM through the {@link CalorieCalculable} interface.
  */
 public abstract class Workout implements CalorieCalculable {
@@ -18,8 +18,15 @@ public abstract class Workout implements CalorieCalculable {
     /** Workout category as stored in the DB: CARDIO, STRENGTH or YOGA. */
     public abstract String getType();
 
-    /** Standard MET formula: kcal = MET * 3.5 * weight(kg) / 200 * minutes. */
+    /**
+     * Standard ACSM Metabolic Equivalent of Task (MET) formula:
+     * kcal = MET * 3.5 * weight(kg) / 200 * minutes.
+     * Handles non-positive input values safely by returning 0.0.
+     */
     protected double baseCalories(double weightKg, int minutes) {
+        if (weightKg <= 0 || minutes <= 0 || metValue <= 0) {
+            return 0.0;
+        }
         return metValue * 3.5 * weightKg / 200.0 * minutes;
     }
 

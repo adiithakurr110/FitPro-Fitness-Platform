@@ -28,10 +28,13 @@
     </a>
   </div>
 
-  <div style="position: relative; min-width: 260px; flex: 1; max-width: 360px;">
-    <input type="text" id="workoutSearch" placeholder="Search by title, coach, or level..." style="padding-left: 38px; border-radius: var(--radius-pill); height: 42px;">
+  <form method="get" action="${ctx}/app/workouts" style="position: relative; min-width: 260px; flex: 1; max-width: 360px;">
+    <c:if test="${not empty activeType}">
+      <input type="hidden" name="type" value="${activeType}">
+    </c:if>
+    <input type="text" id="workoutSearch" name="q" value="<c:out value='${searchQuery}'/>" placeholder="Search by title, coach, or level..." style="padding-left: 38px; border-radius: var(--radius-pill); height: 42px; width: 100%;">
     <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 13px; color: var(--text-tertiary); font-size: 0.9rem;"></i>
-  </div>
+  </form>
 </div>
 
 <!-- Publisher Drawer for Trainers & Admins -->
