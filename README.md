@@ -1,6 +1,7 @@
 # FitPro — Online Fitness Training Platform
 
-**Live Demo:** [Open FitPro Showcase](https://fitpro-theta.vercel.app/) *(Public Presentation Showcase)*  
+**Live Demo:** [Open FitPro Showcase](fitpro-umber.vercel.app) *(Public Presentation Showcase)*  
+**local host:** [Open FitPro Showcase](http://localhost:8080/fitpro/login) *
 **Source Code:** [GitHub Repository](https://github.com/adiithakurr110/FitPro-Fitness-Platform)  
 **Local Setup:** See the installation instructions below to run the complete Java backend.
 
