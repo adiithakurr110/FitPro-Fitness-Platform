@@ -137,65 +137,19 @@ Database settings are configured in `src/main/resources/db.properties` or overri
 
 ## 9. Running the Application
 
-### Option A: Run the Web Application on Tomcat 9 (Recommended)
-Launch the pre-configured embedded Tomcat 9 server using the Maven Cargo plugin:
-```bash
-mvn package cargo:run
-```
-Once the console displays `Tomcat 9.0.82 started on port [8080]`, open your browser at:
-- **Public Landing Page:** `http://localhost:8080/fitpro/`
-- **Login Portal:** `http://localhost:8080/fitpro/login`
-- **Registration Page:** `http://localhost:8080/fitpro/register`
-- **Member Dashboard:** `http://localhost:8080/fitpro/app/dashboard` (protected)
 
-*(Windows shortcut: double-click `run-app.bat`)*
 
-### Option B: Run the Desktop Administration Swing GUI
-Launch the standalone Java Swing administration window:
-```bash
-mvn compile exec:java
-```
-*(Windows shortcut: double-click `run-gui.bat`)*
-
-### Pre-Seeded Demonstration Accounts:
 
 | Role | Email / Username | Password | Primary Capabilities |
-|---|---|---|---|
-| **Member** | `member@fitpro.com` *(or Marcus Wright)* | `member123` | Browse workouts, enroll, log sessions, view calorie analytics, export CSV |
-| **Trainer** | `trainer@fitpro.com` *(or Sarah Connor)* | `trainer123` | Publish workout routines, delete own routines, view assigned members |
-| **Admin** | `admin@fitpro.com` *(or Alex Vance)* | `admin123` | Manage user roles, delete accounts, moderate workouts, view JVM metrics |
 
 *(You can log in using either registered email or full name, or register a new member account at `/fitpro/register`)*
 
 ---
 
-## 10. Testing
-
-Execute the automated test suite using Maven:
-```bash
-mvn clean test
-```
-
-### Verified Test Results:
-- **Total Tests:** 40
-- **Passing:** 40
-- **Failures:** 0
-- **Errors:** 0
-- **Skipped:** 0
-- **Build Status:** `BUILD SUCCESS` (JUnit 5 Jupiter)
-- **Coverage Summary:**
-  - `DAOTest`: CRUD operations across users, workouts, enrollments, and progress logs
-  - `UserModelTest`: Role predicate verification (`isMember`, `isTrainer`, `isAdmin`)
-  - `WorkoutModelTest`: Dynamic polymorphic calorie formulas across Cardio, Strength, and Yoga
-  - `AuthServiceTest`: Registration validation, role tampering prevention, salted hash verification
-  - `WorkoutServiceTest`: Enrollment business rules, duplicate enrollment blocks, trainer publication
-  - `ProgressServiceTest`: Session logging, duration and body weight validation, history retrieval
-  - `DBConnectionTest`: Dual-mode H2 connection, schema verification, multithreaded notification counter
-  - `PasswordUtilTest`: PBKDF2 hashing, random salt generation, constant-time verification
 
 ---
 
-## 11. Project Structure
+## 10. Project Structure
 
 ```
 fitpro/
