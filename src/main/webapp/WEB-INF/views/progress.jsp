@@ -48,7 +48,7 @@
               <label for="workoutSelect">Select Enrolled Workout</label>
               <select id="workoutSelect" name="workoutId" required>
                 <c:forEach var="w" items="${myWorkouts}">
-                  <option value="${w.id}"><c:out value="${w.title}"/> (<c:out value="${w.type}"/>)</option>
+                  <option value="${w.id}" ${param.workoutId == w.id ? 'selected' : ''}><c:out value="${w.title}"/> (<c:out value="${w.type}"/>)</option>
                 </c:forEach>
               </select>
             </div>

@@ -23,7 +23,7 @@ public class AuthFilter implements Filter {
         if (loggedIn) {
             chain.doFilter(req, res);
         } else {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/login?authRequired=1");
         }
     }
 }

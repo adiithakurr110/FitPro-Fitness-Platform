@@ -52,7 +52,7 @@
           <span class="nav-role-badge ${sessionScope.user.admin ? 'admin' : (sessionScope.user.trainer ? 'trainer' : '')}">
             <c:out value="${sessionScope.user.role}"/>
           </span>
-          <a class="btn outline-btn small-btn" href="${ctx}/app/logout" title="Sign out of FitPro">
+          <a class="btn outline-btn small-btn" href="${ctx}/logout" title="Sign out of FitPro">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out (<c:out value="${sessionScope.user.fullName}"/>)
           </a>
           <button class="mobile-toggle" aria-label="Toggle navigation menu">
@@ -90,7 +90,7 @@
         <c:if test="${sessionScope.user.admin}">
           <a href="${ctx}/app/admin"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
         </c:if>
-        <a href="${ctx}/app/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</a>
+        <a href="${ctx}/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</a>
       </c:when>
       <c:otherwise>
         <a href="${ctx}/#features">Features</a>

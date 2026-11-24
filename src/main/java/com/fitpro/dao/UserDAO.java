@@ -46,6 +46,26 @@ public class UserDAO implements BaseDAO<User, Integer> {
         }
     }
 
+    /** Finds an account matching either email or full name (case-insensitive). */
+    public Optional<User> findByEmailOrName(String identifier) throws AppException {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        String sql = "SELECT " + COLS + " FROM users WHERE LOWER(email) = ? OR LOWER(full_name) = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            String query = identifier.trim().toLowerCase();
+            ps.setString(1, query);
+            ps.setString(2, query);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            System.err.println("[UserDAO findByEmailOrName Error] " + e.getMessage());
+            throw new AppException("Could not look up the user: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public Optional<User> findById(Integer id) throws AppException {
         String sql = "SELECT " + COLS + " FROM users WHERE id = ?";

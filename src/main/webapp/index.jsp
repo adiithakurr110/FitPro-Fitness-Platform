@@ -25,7 +25,10 @@
         <a class="btn primary-btn" href="${ctx}/register">
           <i class="fa-solid fa-arrow-right"></i> Get Started Free
         </a>
-        <a class="btn outline-btn" href="${ctx}/app/workouts">
+        <a class="btn outline-btn" href="${ctx}/login">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to FitPro
+        </a>
+        <a class="btn blue-btn" href="${ctx}/app/workouts">
           <i class="fa-solid fa-compass"></i> Explore Workouts
         </a>
       </c:otherwise>

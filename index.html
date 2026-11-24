@@ -412,10 +412,15 @@
       <li><a href="#deployment">Deployment</a></li>
     </ul>
     <div class="nav-cta-group">
-      <a class="btn outline-btn small-btn" href="docs/FitPro_Presentation_v3.pdf" target="_blank" title="Download Official Presentation Slides">
-        <i class="fa-regular fa-file-pdf"></i> Presentation PDF
+      <a class="btn outline-btn small-btn" href="http://localhost:8080/fitpro/login" title="Open Local Java Login Page">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
       </a>
-      <a class="btn primary-btn small-btn" href="#deployment">Run Local App</a>
+      <a class="btn primary-btn small-btn" href="http://localhost:8080/fitpro/register" title="Open Local Java Registration Page">
+        Get Started
+      </a>
+      <a class="btn outline-btn small-btn" href="docs/FitPro_Presentation_v3.pdf" target="_blank" title="Download Official Presentation Slides">
+        <i class="fa-regular fa-file-pdf"></i> PDF
+      </a>
     </div>
   </div>
 </header>
@@ -430,14 +435,38 @@
       wrapped in an Apple-inspired minimal user experience.
     </p>
     <div class="landing-cta-group">
-      <a class="btn primary-btn" href="#roles">
-        <i class="fa-solid fa-users"></i> Explore Three Roles
+      <a class="btn primary-btn" href="http://localhost:8080/fitpro/login">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Open Java Login Portal
       </a>
-      <a class="btn outline-btn" href="#workouts">
-        <i class="fa-solid fa-compass"></i> Workout Catalogue
+      <a class="btn outline-btn" href="http://localhost:8080/fitpro/register">
+        <i class="fa-solid fa-user-plus"></i> Register Account
       </a>
       <a class="btn blue-btn" href="docs/FitPro_Presentation_v3.pdf" target="_blank">
         <i class="fa-solid fa-file-arrow-down"></i> Slide Deck (PDF)
+      </a>
+    </div>
+  </section>
+
+  <!-- Live Local Java Portal Quick Banner -->
+  <div style="max-width: 980px; margin: 0 auto 36px; padding: 16px 24px; background: #ffffff; border-radius: 16px; border: 1px solid var(--hairline); box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: #e0f2fe; color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+        <i class="fa-solid fa-server"></i>
+      </div>
+      <div>
+        <strong style="display: block; font-size: 0.95rem; color: var(--text-main);">Dynamic Java Backend Portal (Tomcat 9)</strong>
+        <span style="font-size: 0.85rem; color: var(--text-secondary);">Run locally via <code>run-app.bat</code> or <code>mvn cargo:run</code> at <strong>http://localhost:8080/fitpro/</strong></span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <a href="http://localhost:8080/fitpro/login" class="btn primary-btn small-btn">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Open Login Page
+      </a>
+      <a href="http://localhost:8080/fitpro/register" class="btn outline-btn small-btn">
+        <i class="fa-solid fa-user-plus"></i> Register
+      </a>
+    </div>
+  </div>
       </a>
     </div>
   </section>

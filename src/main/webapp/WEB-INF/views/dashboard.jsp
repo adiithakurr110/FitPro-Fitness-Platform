@@ -294,7 +294,10 @@
       <div class="hero-banner-content">
         <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> Personal Training Hub</span>
         <h1><c:out value="${sessionScope.user.welcomeMessage}"/></h1>
-        <p>Keep momentum on your fitness journey. Review your current programs and log completed workouts.</p>
+        <p>
+          Logged in as <strong><c:out value="${sessionScope.user.fullName}"/></strong> (<c:out value="${sessionScope.user.email}"/>).
+          Review your enrolled routines, track daily caloric expenditure, and log completed workouts.
+        </p>
         <div class="hero-banner-actions">
           <a href="${ctx}/app/progress" class="btn blue-btn">
             <i class="fa-solid fa-plus-circle"></i> Log Training Session
@@ -302,10 +305,16 @@
           <a href="${ctx}/app/workouts" class="btn outline-btn">
             <i class="fa-solid fa-compass"></i> Discover Workouts
           </a>
+          <a href="${ctx}/logout" class="btn outline-btn" title="Sign out of FitPro">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+          </a>
         </div>
       </div>
-      <div>
-        <span class="badge neutral" style="font-size: 0.85rem; padding: 6px 14px;">
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <span class="badge YOGA" style="font-size: 0.85rem; padding: 6px 14px;">
+          <i class="fa-solid fa-circle-check"></i> Member Active
+        </span>
+        <span class="badge neutral" style="font-size: 0.82rem; padding: 4px 12px;">
           <i class="fa-regular fa-calendar"></i> Today
         </span>
       </div>
@@ -383,7 +392,7 @@
                     <span style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 500;">
                       <i class="fa-solid fa-user-ninja"></i> Coach: <c:out value="${w.trainerName}" default="FitPro Coach"/>
                     </span>
-                    <a href="${ctx}/app/progress" class="btn small-btn primary-btn">
+                    <a href="${ctx}/app/progress?workoutId=${w.id}" class="btn small-btn primary-btn">
                       <i class="fa-solid fa-plus"></i> Log Session
                     </a>
                   </div>

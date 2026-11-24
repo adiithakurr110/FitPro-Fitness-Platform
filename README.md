@@ -142,7 +142,10 @@ Launch the pre-configured embedded Tomcat 9 server using the Maven Cargo plugin:
 mvn package cargo:run
 ```
 Once the console displays `Tomcat 9.0.82 started on port [8080]`, open your browser at:
-**`http://localhost:8080/fitpro/`**
+- **Public Landing Page:** `http://localhost:8080/fitpro/`
+- **Login Portal:** `http://localhost:8080/fitpro/login`
+- **Registration Page:** `http://localhost:8080/fitpro/register`
+- **Member Dashboard:** `http://localhost:8080/fitpro/app/dashboard` (protected)
 
 *(Windows shortcut: double-click `run-app.bat`)*
 
@@ -155,13 +158,13 @@ mvn compile exec:java
 
 ### Pre-Seeded Demonstration Accounts:
 
-| Role | Email | Password | Primary Capabilities |
+| Role | Email / Username | Password | Primary Capabilities |
 |---|---|---|---|
-| **Member** | `member@fitpro.com` | `member123` | Browse workouts, enroll, log sessions, view calorie analytics, export CSV |
-| **Trainer** | `trainer@fitpro.com` | `trainer123` | Publish workout routines, delete own routines, view assigned members |
-| **Admin** | `admin@fitpro.com` | `admin123` | Manage user roles, delete accounts, moderate workouts, view JVM metrics |
+| **Member** | `member@fitpro.com` *(or Marcus Wright)* | `member123` | Browse workouts, enroll, log sessions, view calorie analytics, export CSV |
+| **Trainer** | `trainer@fitpro.com` *(or Sarah Connor)* | `trainer123` | Publish workout routines, delete own routines, view assigned members |
+| **Admin** | `admin@fitpro.com` *(or Alex Vance)* | `admin123` | Manage user roles, delete accounts, moderate workouts, view JVM metrics |
 
-*(You can also use `demo@fitpro.com` / `Demo@123` or register a new account on the registration page)*
+*(You can log in using either registered email or full name, or register a new member account at `/fitpro/register`)*
 
 ---
 
@@ -173,11 +176,12 @@ mvn clean test
 ```
 
 ### Verified Test Results:
-- **Total Tests:** 39
-- **Passing:** 39
+- **Total Tests:** 40
+- **Passing:** 40
 - **Failures:** 0
 - **Errors:** 0
 - **Skipped:** 0
+- **Build Status:** `BUILD SUCCESS` (JUnit 5 Jupiter)
 - **Coverage Summary:**
   - `DAOTest`: CRUD operations across users, workouts, enrollments, and progress logs
   - `UserModelTest`: Role predicate verification (`isMember`, `isTrainer`, `isAdmin`)

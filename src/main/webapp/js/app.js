@@ -36,6 +36,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // 2b. Demo Credentials Autofill
+  document.querySelectorAll(".demo-autofill-btn").forEach(function (card) {
+    card.addEventListener("click", function () {
+      var email = card.getAttribute("data-email");
+      var pass = card.getAttribute("data-pass");
+      var emailInput = document.getElementById("loginEmail");
+      var passInput = document.getElementById("loginPassword");
+      if (emailInput && passInput) {
+        emailInput.value = email;
+        passInput.value = pass;
+        emailInput.focus();
+      }
+    });
+  });
+
   // 3. Form Validation Feedback
   document.querySelectorAll("form.validate").forEach(function (form) {
     form.addEventListener("submit", function (event) {

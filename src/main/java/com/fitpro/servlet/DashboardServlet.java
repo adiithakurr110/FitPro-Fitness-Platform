@@ -35,7 +35,7 @@ public class DashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/login?authRequired=1");
             return;
         }
 
@@ -71,5 +71,10 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("error", e.getMessage());
         }
         req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 }

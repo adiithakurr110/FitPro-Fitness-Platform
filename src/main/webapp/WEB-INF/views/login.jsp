@@ -15,8 +15,8 @@
 
     <form method="post" action="${ctx}/login" class="validate">
       <div class="form-group">
-        <label for="loginEmail">Email Address</label>
-        <input type="email" id="loginEmail" name="email" value="<c:out value='${email}'/>" placeholder="name@example.com" autocomplete="email" required>
+        <label for="loginEmail">Email Address or Username</label>
+        <input type="text" id="loginEmail" name="email" value="<c:out value='${email}'/>" placeholder="name@example.com or Full Name" autocomplete="username" required>
       </div>
 
       <div class="form-group">
@@ -40,18 +40,21 @@
 
     <!-- Quick Demonstration Credentials -->
     <div class="demo-credentials-box">
-      <strong><i class="fa-solid fa-key text-primary"></i> Quick Demo Accounts</strong>
-      <div class="demo-credential-item">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <strong><i class="fa-solid fa-key text-primary"></i> Quick Demo Accounts</strong>
+        <span class="muted" style="font-size: 0.75rem;">Click to Autofill</span>
+      </div>
+      <div class="demo-credential-item demo-autofill-btn" data-email="member@fitpro.com" data-pass="member123" style="cursor: pointer;" title="Click to autofill Member credentials">
         <span><i class="fa-solid fa-user"></i> <strong>Member:</strong> member@fitpro.com</span>
-        <span>Pass: <code>member123</code></span>
+        <span>Pass: <code>member123</code> <i class="fa-solid fa-arrow-turn-down" style="font-size: 0.75rem; margin-left: 4px; color: var(--accent-blue);"></i></span>
       </div>
-      <div class="demo-credential-item">
+      <div class="demo-credential-item demo-autofill-btn" data-email="trainer@fitpro.com" data-pass="trainer123" style="cursor: pointer;" title="Click to autofill Trainer credentials">
         <span><i class="fa-solid fa-user-ninja"></i> <strong>Trainer:</strong> trainer@fitpro.com</span>
-        <span>Pass: <code>trainer123</code></span>
+        <span>Pass: <code>trainer123</code> <i class="fa-solid fa-arrow-turn-down" style="font-size: 0.75rem; margin-left: 4px; color: var(--accent-blue);"></i></span>
       </div>
-      <div class="demo-credential-item">
+      <div class="demo-credential-item demo-autofill-btn" data-email="admin@fitpro.com" data-pass="admin123" style="cursor: pointer;" title="Click to autofill Admin credentials">
         <span><i class="fa-solid fa-user-shield"></i> <strong>Admin:</strong> admin@fitpro.com</span>
-        <span>Pass: <code>admin123</code></span>
+        <span>Pass: <code>admin123</code> <i class="fa-solid fa-arrow-turn-down" style="font-size: 0.75rem; margin-left: 4px; color: var(--accent-blue);"></i></span>
       </div>
     </div>
   </div>

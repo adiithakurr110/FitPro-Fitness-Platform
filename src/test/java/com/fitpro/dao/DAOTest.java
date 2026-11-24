@@ -24,10 +24,12 @@ public class DAOTest {
     @Test
     @DisplayName("UserDAO performs CRUD, findByEmail, and findAll correctly")
     public void testUserDAOCRUD() throws AppException {
-        String email = "daouser_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        String token = UUID.randomUUID().toString().substring(0, 8);
+        String name = "DAO Test Member " + token;
+        String email = "daouser_" + token + "@fitprotest.com";
 
         User u = User.of("MEMBER");
-        u.setFullName("DAO Test Member");
+        u.setFullName(name);
         u.setEmail(email);
         u.setPasswordHash("dummyHash:123456");
 
@@ -36,11 +38,19 @@ public class DAOTest {
 
         Optional<User> foundById = userDAO.findById(id);
         Assertions.assertTrue(foundById.isPresent());
-        Assertions.assertEquals("DAO Test Member", foundById.get().getFullName());
+        Assertions.assertEquals(name, foundById.get().getFullName());
 
         Optional<User> foundByEmail = userDAO.findByEmail(email);
         Assertions.assertTrue(foundByEmail.isPresent());
         Assertions.assertEquals(id, foundByEmail.get().getId());
+
+        Optional<User> foundByName = userDAO.findByEmailOrName(name);
+        Assertions.assertTrue(foundByName.isPresent());
+        Assertions.assertEquals(id, foundByName.get().getId());
+
+        Optional<User> foundByEmailOrName = userDAO.findByEmailOrName(email);
+        Assertions.assertTrue(foundByEmailOrName.isPresent());
+        Assertions.assertEquals(id, foundByEmailOrName.get().getId());
 
         List<User> all = userDAO.findAll();
         Assertions.assertFalse(all.isEmpty());

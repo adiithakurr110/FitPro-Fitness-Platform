@@ -46,13 +46,19 @@ public class AuthService {
 
     /**
      * Authenticates an account against stored salted PBKDF2 hashes.
-     * @throws AppException with a deliberately generic message on failure to prevent user enumeration
+     * Supports login via either registered email or username / full name.
+     * Enforces server-side validation and readable error messages.
      */
-    public User login(String email, String password) throws AppException {
-        Optional<User> found = userDAO.findByEmail(email == null ? "" : email.trim().toLowerCase());
-        if (!found.isPresent() || password == null
-                || !PasswordUtil.verify(password, found.get().getPasswordHash())) {
-            throw new AppException("Invalid email or password.");
+    public User login(String identifier, String password) throws AppException {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            throw new AppException("Please enter your email address or username.");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new AppException("Please enter your password.");
+        }
+        Optional<User> found = userDAO.findByEmailOrName(identifier.trim());
+        if (!found.isPresent() || !PasswordUtil.verify(password, found.get().getPasswordHash())) {
+            throw new AppException("Invalid email/username or password.");
         }
         return found.get();
     }

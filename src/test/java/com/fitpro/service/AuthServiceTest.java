@@ -43,12 +43,14 @@ public class AuthServiceTest {
     @Test
     @DisplayName("Successful registration and login workflow")
     public void testRegisterAndLoginSuccess() throws Exception {
-        String uniqueEmail = "user_" + UUID.randomUUID().toString().substring(0, 8) + "@fitprotest.com";
+        String token = UUID.randomUUID().toString().substring(0, 8);
+        String uniqueName = "Test Runner " + token;
+        String uniqueEmail = "user_" + token + "@fitprotest.com";
         String password = "Password@2026!";
 
-        User registered = authService.register("Test Runner", uniqueEmail, password, "MEMBER");
+        User registered = authService.register(uniqueName, uniqueEmail, password, "MEMBER");
         Assertions.assertNotNull(registered);
-        Assertions.assertEquals("Test Runner", registered.getFullName());
+        Assertions.assertEquals(uniqueName, registered.getFullName());
         Assertions.assertEquals(uniqueEmail, registered.getEmail());
         Assertions.assertEquals("MEMBER", registered.getRole());
         Assertions.assertTrue(registered.getId() > 0);
@@ -69,6 +71,23 @@ public class AuthServiceTest {
         // Test login failure with nonexistent email
         Assertions.assertThrows(AppException.class, () ->
                 authService.login("nonexistent@nowhere.org", "anyPass"));
+
+        // Test login with full name / username instead of email
+        User loggedInByName = authService.login(uniqueName, password);
+        Assertions.assertNotNull(loggedInByName);
+        Assertions.assertEquals(registered.getId(), loggedInByName.getId());
+    }
+
+    @Test
+    @DisplayName("Login validation rejects blank identifier and blank password")
+    public void testLoginValidationEmptyInputs() {
+        AppException ex1 = Assertions.assertThrows(AppException.class, () ->
+                authService.login("", "password123"));
+        Assertions.assertTrue(ex1.getMessage().contains("Please enter your email address or username"));
+
+        AppException ex2 = Assertions.assertThrows(AppException.class, () ->
+                authService.login("user@example.com", ""));
+        Assertions.assertTrue(ex2.getMessage().contains("Please enter your password"));
     }
 
     @Test
